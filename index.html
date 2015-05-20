@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Super Ginger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+    body {
+        padding: 0px;
+        margin: 0px;
+    }
+    </style>
+    <script src="dep/esl.js"></script>
+    <script src="dep/phaser.min.js"></script>
+    <script src="dep/phaser-state-transition.min.js"></script>
+    <script>
+    require.config({
+        baseUrl: 'src'
+    });
+    </script>
+</head>
+<body>
+    <script>
+    require(['main'], function (main) {
+        main.init();
+    });
+    </script>
+</body>
+</html>
