@@ -5,7 +5,7 @@
 
 define(function (require) {
 
-    var Scoreboard = function (game, options) {
+    var Scoreboard = function (game) {
         this.game = game;
         this.score = 0;
         this.text = null;

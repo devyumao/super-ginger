@@ -9,10 +9,12 @@ define(function (require) {
 
     var Stage = function (game) {
         this.game = game;
+
         this.prev = null;
         this.curr = null;
         this.next = null;
         this.spot = null;
+        this.food = null;
 
         this.height = 235; // TODO: set to global
         this.currEdgeX = 110;
@@ -53,12 +55,6 @@ define(function (require) {
 
         return spot;
     };
-
-    // Stage.prototype._updateGroup = function () {
-    //     var group = this.group;
-    //     group.add(this.curr, 0);
-    //     group.add(this.next, 1);
-    // };
 
     Stage.prototype.addNext = function (cb) {
         var game = this.game;
