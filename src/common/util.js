@@ -6,7 +6,7 @@
 define(function (require) {
 
     function random(lower, upper) {
-        return Math.floor(lower + Math.random() * (upper - lower));
+        return Math.floor(lower + Math.random() * (upper - lower + 1));
     }
 
     function isArray(item) {

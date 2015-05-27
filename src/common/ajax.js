@@ -1,10 +1,9 @@
 /**
  * @file AJAX
  * @author yumao [zhangyu38@baidu.com]
- * @create 2015-01-26
  */
 
-define(function () {
+define(function (require) {
 
     function toQuery(data) {
         var query = [];

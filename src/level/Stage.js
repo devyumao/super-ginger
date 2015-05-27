@@ -6,6 +6,7 @@
 define(function (require) {
 
     var util = require('common/util');
+    var Food = require('./Food');
 
     var Stage = function (game) {
         this.game = game;
@@ -22,29 +23,58 @@ define(function (require) {
         this.maxWidth = 110;
         this.spotWidth = 10; // TODO: 英雄技能影响
 
+        this.foodProba = 0.5;
+
         this._init();
     };
 
     Stage.prototype._init = function () {
         var game = this.game;
 
-        var curr = game.add.image(0, game.height - this.height, 'stage');
-        curr.scale.set(this.currEdgeX, this.height);
+        // var curr = game.add.image(0, game.height - this.height, 'stage');
+        var curr = game.add.image((game.width - this.maxWidth) / 2, game.height - 150, 'stage');
+        curr.scale.set(this.maxWidth, this.height);
         this.curr = curr;
+    };
 
-        this._createSpot(curr);
+    Stage.prototype.setForPlay = function (useAnim, cb) {
+        var game = this.game;
 
+        // 初始化 next
         // 初始 next 限制宽度与距离，使得首次难度不要太奇葩
         var nextWidth = this.maxWidth;
-        var next = this.game.add.image(
-            this.currEdgeX + util.random(40, 180),
+        var next = game.add.image(
+            game.width,
             game.height - this.height,
             'stage'
         );
         next.scale.set(nextWidth, this.height);
         this.next = next;
-
         this.spot = this._createSpot(next);
+
+        var currX = 0;
+        var currY = game.height - this.height;
+        var nextX = this.currEdgeX + util.random(40, 180);
+
+        if (useAnim) {
+            // curr 移动
+            var moveCurr = game.add.tween(this.curr)
+                .to({x: currX, y: currY}, 200, Phaser.Easing.Linear.None);
+
+            // next 移动
+            var moveNext = game.add.tween(next)
+                .to({x: nextX}, 200, Phaser.Easing.Linear.None);
+            cb && moveNext.onComplete.add(cb);
+
+            moveCurr.chain(moveNext);
+            moveCurr.start();
+        }
+        else {
+            var curr = this.curr;
+            curr.x = currX;
+            curr.y = currY;
+            next.x = nextX;
+        }
     };
 
     Stage.prototype._createSpot = function (pillar) {
@@ -56,12 +86,46 @@ define(function (require) {
         return spot;
     };
 
+    Stage.prototype._createFood = function () {
+        var game = this.game;
+
+        var food = new Food(
+            game,
+            {
+                x: game.width,
+                y: game.height - this.height + 10 // TODO: global
+            }
+        );
+
+        return food;
+    };
+
     Stage.prototype.addNext = function (cb) {
         var game = this.game;
 
         var nextWidth = util.random(this.minWidth, this.maxWidth);
+        var nextMargin = 20;
+        var nextX = util.random(this.currEdgeX + nextMargin, game.width - nextWidth - nextMargin);
+
+        // 来一个 food
+        var foodWidth = 24;
+        var foodMargin = 10;
+        var food = null;
+        var foodX = nextX;
+        var hasFood = !!util.random(0, 1) // 先验概率
+            && nextX - this.currEdgeX >= foodWidth + foodMargin * 2; // 间距是否足够放
+        if (hasFood) {
+            foodX = util.random(this.currEdgeX + foodMargin, nextX - foodMargin - foodWidth);
+            // foodX = this.currEdgeX + foodMargin;
+            food = this._createFood();
+            var moveFood = game.add.tween(food.getEl())
+                .to({x: foodX}, 300, Phaser.Easing.Linear.None);
+            moveFood.start();
+        }
+
+        // 来下一根柱子
         var next = this.game.add.image(
-            game.width,
+            game.width + nextX - foodX,
             game.height - this.height,
             'stage'
         );
@@ -69,10 +133,8 @@ define(function (require) {
 
         var spot = this._createSpot(next);
 
-        var newX = util.random(this.currEdgeX + 20, (game.width - nextWidth - 20));
         var move = game.add.tween(next)
-            .to({x: newX}, 300, Phaser.Easing.Linear.None);
-
+            .to({x: nextX}, 300, Phaser.Easing.Linear.None);
         move.onComplete.add(function () {
             this.prev && this.prev.destroy();
             this.prev = this.curr;
@@ -80,9 +142,11 @@ define(function (require) {
             this.next = next;
             this.spot = spot;
 
+            this.food && this.food.destroy();
+            this.food = food || null;
+
             cb && cb();
         }, this);
-
         move.start();
     };
 
@@ -96,7 +160,9 @@ define(function (require) {
     };
 
     Stage.prototype.getEl = function () {
-        return [this.prev, this.curr, this.next];
+        var el = [this.prev, this.curr, this.next];
+        this.food && el.push(this.food.getEl());
+        return el;
     };
 
     Stage.prototype.getInterval = function () {
@@ -110,8 +176,6 @@ define(function (require) {
     };
 
     Stage.prototype.getSpotRange = function () {
-        // pillar.x + spot.x * pillar.width
-
         var lower = this.getSpotX() - this.currEdgeX - this.spotWidth / 2;
         var upper = lower + this.spotWidth;
 
@@ -119,6 +183,10 @@ define(function (require) {
             lower: lower,
             upper: upper
         };
+    };
+
+    Stage.prototype.getFood = function () {
+        return this.food;
     };
 
     return Stage;

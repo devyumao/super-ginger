@@ -1,35 +1,72 @@
 /**
- * @file πÿø® state
+ * @file ÂÖ≥Âç° state
  * @author yumao [zhangyu38@baidu.com]
  */
 
 define(function (require) {
 
+    var global = require('common/global');
+
     var Level = function () {
-        this.stage = null;
-        this.hero = null;
-        this.stick = null;
-        this.foreground = null;
-        this.scoreboard = null;
     };
 
     Level.prototype._reset = function () {
-        this.isHoldEnabled = true;
+        this.isHoldEnabled = false;
         this.isBeingHeld = false;
 
         this.isTouchEnabled = false;
+
+        this.isFoodToBeAdded = false;
     };
 
-    Level.prototype._initObjects = function () {
+    Level.prototype._initMenuStatus = function () {
         var game = this.game;
-
-        var Scoreboard = require('./Scoreboard');
-        this.scoreboard = new Scoreboard(game);
 
         var Stage = require('./Stage');
         this.stage = new Stage(game);
         var Hero = require('./Hero');
         this.hero = new Hero(game);
+
+        var Start = require('./Start');
+        this.start = new Start(
+            game,
+            {
+                callback: this._initPlayStatus,
+                context: this
+            }
+        );
+    };
+
+    Level.prototype._initPlayStatus = function () {
+        var game = this.game;
+
+        if (this.status === 'play') {
+            var Stage = require('./Stage');
+            this.stage = new Stage(game);
+            var Hero = require('./Hero');
+            this.hero = new Hero(game);
+
+            this.hero.setForPlay(false);
+            this.stage.setForPlay(false);
+
+            this.isHoldEnabled = true;
+        }
+        else {
+            this.start.destroy();
+
+            this.hero.setForPlay(true);
+            var me = this;
+            this.stage.setForPlay(true, function () {
+                me.status = 'play';
+                me.isHoldEnabled = true;
+            });
+        }
+
+        var Scoreboard = require('./Scoreboard');
+        this.scoreboard = new Scoreboard(game);
+        var Foodboard = require('./Foodboard');
+        this.foodboard = new Foodboard(game);
+
         var Stick = require('./Stick');
         this.stick = new Stick(game);
 
@@ -40,41 +77,35 @@ define(function (require) {
                 objects: [this.stage, this.hero, this.stick]
             }
         );
+
+        this._bindTouch();
     };
 
     Level.prototype._bindTouch = function () {
         var game = this.game;
 
         game.input.onDown.add(onInputDown, this);
-
         game.input.onUp.add(onInputUp, this);
     };
 
     Level.prototype._fail = function () {
         var me = this;
 
+        var highest = global.getHighest();
+        var score = this.scoreboard.getScore();
+
+        score > highest && global.setHighest(score);
+
         this.stick.fall();
         this.hero.fall(function () {
-            me.state.restart();
+            me.state.restart(true, false, 'play');
         });
-    };
-
-    Level.prototype.isStickInStage = function () {
-        var stage = this.stage;
-        return this.stick.isBetween(stage.getInterval(), stage.getNextEdgeX() - stage.getCurrEdgeX());
-    };
-
-    Level.prototype.isStickInSpot = function () {
-        var spotRange = this.stage.getSpotRange();
-        console.log(this.stick.getLength());
-        console.log(spotRange);
-        return this.stick.isBetween(spotRange.lower, spotRange.upper);
     };
 
     Level.prototype._showReward = function () {
         var game = this.game;
 
-        // º”∑÷Œƒ±æ
+        // Âä†ÂàÜÊñáÊú¨
         var pointsText = game.add.text(
             this.stage.getSpotX(), game.height - 235,
             '+1',
@@ -101,7 +132,7 @@ define(function (require) {
         showPoints.start();
         risePoints.start();
 
-        // ‘ﬁ√¿÷Æ¥ 
+        // ËµûÁæé‰πãËØç
         var praiseText = game.add.text(
             game.width / 2, 160,
             'Perfect!',
@@ -147,6 +178,7 @@ define(function (require) {
         var stick = this.stick;
         var foreground = this.foreground;
         var scoreboard = this.scoreboard;
+        var foodboard = this.foodboard;
 
         var currEdgeX = stage.getCurrEdgeX();
         var nextEdgeX = stage.getNextEdgeX();
@@ -155,26 +187,32 @@ define(function (require) {
         stick.layDown(function () {
             me.isTouchEnabled = true;
 
-            if (stick.getLength() > stage.getInterval()) { // ≥§∂»◊„πª
-                if (me.isStickInSpot()) { // √¸÷–∫Ï«¯
+            if (stick.getLength() > stage.getInterval()) { // ÈïøÂ∫¶Ë∂≥Â§ü
+                if (stick.isInSpot(stage)) { // ÂëΩ‰∏≠Á∫¢Âå∫
                     console.log('NB!');
                     scoreboard.addScore(1);
                     me._showReward();
                 }
 
-                // œ»◊ﬂµΩ next «∞—ÿ
+                // ÂÖàËµ∞Âà∞ next ÂâçÊ≤ø
                 hero.walk(
                     stage.getCurrEdgeX() + stage.getInterval(),
                     function () {
                         if (!hero.isUpsideDown()) {
                             me.isTouchEnabled = false;
-                            // √ªµπ÷√£¨ºÃ–¯◊ﬂ
+                            // Ê≤°ÂÄíÁΩÆÔºåÁªßÁª≠Ëµ∞
 
-                            if (me.isStickInStage()) { // ≥…π¶¿≤
+                            if (stick.isInStage(stage)) { // ÊàêÂäüÂï¶
                                 hero.walk(
-                                    nextEdgeX - 5,
+                                    nextEdgeX - 2,
                                     function () {
                                         scoreboard.addScore(1);
+
+                                        if (me.isFoodToBeAdded) {
+                                            me.isFoodToBeAdded = false;
+                                            global.setFoodCount(global.getFoodCount() + 1);
+                                            foodboard.update();
+                                        }
 
                                         foreground.move(currEdgeX - nextEdgeX);
 
@@ -186,7 +224,7 @@ define(function (require) {
                                     }
                                 );
                             }
-                            else { // ◊ﬂπ˝¡À
+                            else { // Ëµ∞Ëøá‰∫Ü
                                 hero.walk(
                                     currEdgeX + stick.getLength(),
                                     function () {
@@ -196,13 +234,13 @@ define(function (require) {
                             }
                         }
                         else {
-                            // µπ÷√¥•±⁄£¨over
+                            // ÂÄíÁΩÆËß¶Â£ÅÔºåover
                             me._fail();
                         }
                     }
                 );
             }
-            else { // ≥§∂»≤ª◊„
+            else { // ÈïøÂ∫¶‰∏çË∂≥
                 hero.walk(
                     currEdgeX + stick.getLength(),
                     function () {
@@ -215,15 +253,35 @@ define(function (require) {
         });
     }
 
+    Level.prototype.init = function (status) {
+        this.status = status;
+    };
+
     Level.prototype.create = function () {
         this._reset();
-        this._initObjects();
-        this._bindTouch();
+
+        switch (this.status) {
+            case 'menu':
+                this._initMenuStatus();
+                break;
+            case 'play':
+                this._initPlayStatus();
+                break;
+        }
     };
 
     Level.prototype.update = function () {
+        if (this.status !== 'play') {
+            return;
+        }
+
         if (this.isHoldEnabled && this.isBeingHeld) {
             this.stick.lengthen();
+        }
+
+        var food = this.stage.getFood();
+        if (food && food.isStartingBeingEaten(this.hero)) {
+            this.isFoodToBeAdded = true;
         }
     };
 

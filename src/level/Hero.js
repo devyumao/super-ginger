@@ -17,10 +17,29 @@ define(function (require) {
     Hero.prototype._init = function () {
         var game = this.game;
 
-        var sprite = game.add.image(110 - 5, game.height - 235, 'stage');
-        sprite.scale.set(20, 30);
+        var sprite = game.add.image((game.width + 30) / 2, game.height - 150, 'boy');
+        sprite.scale.set(0.5);
         sprite.anchor.set(1, 1);
         this.sprite = sprite;
+    };
+
+    Hero.prototype.setForPlay = function (useAnim, cb) {
+        var game = this.game;
+
+        var x = 110 - 2;
+        var y = game.height - 235;
+
+        if (useAnim) {
+            var move = game.add.tween(this.sprite)
+                .to({x: x, y: y}, 200, Phaser.Easing.Linear.None);
+            cb && move.onComplete.add(cb);
+            move.start();
+        }
+        else {
+            var sprite = this.sprite;
+            sprite.x = x;
+            sprite.y = y;
+        }
     };
 
     Hero.prototype.walk = function (targetX, cb) {
@@ -63,6 +82,14 @@ define(function (require) {
 
     Hero.prototype.isUpsideDown = function () {
         return this.upsideDown;
+    };
+
+    Hero.prototype.getX = function () {
+        return this.sprite.x;
+    };
+
+    Hero.prototype.getWidth = function () {
+        return this.sprite.width;
     };
 
     return Hero;

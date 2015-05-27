@@ -1,10 +1,9 @@
 /**
  * @file 颜色
  * @author yumao [zhangyu38@baidu.com]
- * @create 2015-04-06
  */
 
-define(function () {
+define(function (require) {
 
     var colors = {
         'bg': '#FFE6CD'

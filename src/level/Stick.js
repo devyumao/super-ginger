@@ -77,6 +77,15 @@ define(function (require) {
         return length > lower && length < upper;
     };
 
+    Stick.prototype.isInStage = function (stage) {
+        return this.isBetween(stage.getInterval(), stage.getNextEdgeX() - stage.getCurrEdgeX());
+    };
+
+    Stick.prototype.isInSpot = function (stage) {
+        var spotRange = stage.getSpotRange();
+        return this.isBetween(spotRange.lower, spotRange.upper);
+    };
+
     return Stick;
 
 });
