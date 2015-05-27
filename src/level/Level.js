@@ -155,26 +155,30 @@ define(function (require) {
     };
 
     function onInputDown () {
-        this.isBeingHeld = true;
+        // this.isBeingHeld = true;
+
+        var hero = this.hero;
+
+        if (this.isHoldEnabled) {
+            this.isBeingHeld = true;
+            hero.up();
+        }
 
         if (this.isTouchEnabled) {
-            this.hero.flip();
+            hero.flip();
         }
     }
 
     function onInputUp() {
-        this.isBeingHeld = false;
-
-        if (!this.isHoldEnabled) {
+        if (!this.isHoldEnabled || !this.isBeingHeld) {
             return;
         }
 
+        this.isBeingHeld = false;
         this.isHoldEnabled = false;
 
-        var me = this;
-
-        var stage = this.stage;
         var hero = this.hero;
+        var stage = this.stage;
         var stick = this.stick;
         var foreground = this.foreground;
         var scoreboard = this.scoreboard;
@@ -183,6 +187,9 @@ define(function (require) {
         var currEdgeX = stage.getCurrEdgeX();
         var nextEdgeX = stage.getNextEdgeX();
 
+        var me = this;
+
+        hero.kick();
         // TODO: promises
         stick.layDown(function () {
             me.isTouchEnabled = true;
@@ -204,7 +211,7 @@ define(function (require) {
 
                             if (stick.isInStage(stage)) { // 成功啦
                                 hero.walk(
-                                    nextEdgeX - 2,
+                                    nextEdgeX + 5,
                                     function () {
                                         scoreboard.addScore(1);
 

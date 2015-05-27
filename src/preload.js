@@ -17,7 +17,10 @@ define(function (require) {
         game.load.image('food', path + 'food.png');
         game.load.image('start', path + 'start.png');
 
-        game.load.image('boy', path + 'boy.png');
+        game.load.spritesheet('boy-down', path + 'boy-down.png', 76, 103);
+        game.load.spritesheet('boy-up', path + 'boy-up.png', 76, 106);
+        game.load.spritesheet('boy-walk', path + 'boy-walk.png', 76, 106);
+        game.load.spritesheet('boy-kick', path + 'boy-kick.png', 76, 103);
     }
 
     function create() {

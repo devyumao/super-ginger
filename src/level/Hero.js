@@ -17,16 +17,19 @@ define(function (require) {
     Hero.prototype._init = function () {
         var game = this.game;
 
-        var sprite = game.add.image((game.width + 30) / 2, game.height - 150, 'boy');
+        var sprite = game.add.sprite((game.width + 76 / 2) / 2, game.height - 150, 'boy-down');
         sprite.scale.set(0.5);
         sprite.anchor.set(1, 1);
         this.sprite = sprite;
+
+        this.down();
+        // this.up();
     };
 
     Hero.prototype.setForPlay = function (useAnim, cb) {
         var game = this.game;
 
-        var x = 110 - 2;
+        var x = 110 + 5;
         var y = game.height - 235;
 
         if (useAnim) {
@@ -40,6 +43,27 @@ define(function (require) {
             sprite.x = x;
             sprite.y = y;
         }
+    };
+
+    Hero.prototype._act = function (action, frameRate, loop) {
+        var sprite = this.sprite;
+        var key = 'boy-' + action;
+        sprite.key !== key && sprite.loadTexture(key); // 避免重载（loadTexture 较耗内存）
+        !sprite.animations.getAnimation(action) && sprite.animations.add(action);
+        sprite.animations.play(action, frameRate, !!loop);
+        console.log(action);
+    };
+
+    Hero.prototype.down = function () {
+        this._act('down', 6, true);
+    };
+
+    Hero.prototype.up = function () {
+        this._act('up', 10, true);
+    };
+
+    Hero.prototype.kick = function () {
+        this._act('kick', 24);
     };
 
     Hero.prototype.walk = function (targetX, cb) {
@@ -56,7 +80,15 @@ define(function (require) {
 
         var move = game.add.tween(sprite)
             .to({x: targetX}, duration, Phaser.Easing.Linear.None);
-        cb && move.onComplete.add(cb);
+        move.onComplete.add(
+            function () {
+                this.down();
+                cb && cb();
+            },
+            this
+        );
+
+        this._act('walk', 28, true);
 
         move.start();
     };

@@ -5,7 +5,6 @@
 
 define(function (require) {
 
-    var util = require('common/util');
     var Food = require('./Food');
 
     var Stage = function (game) {
@@ -54,7 +53,7 @@ define(function (require) {
 
         var currX = 0;
         var currY = game.height - this.height;
-        var nextX = this.currEdgeX + util.random(40, 180);
+        var nextX = this.currEdgeX + game.rnd.between(40, 180);
 
         if (useAnim) {
             // curr 移动
@@ -103,19 +102,19 @@ define(function (require) {
     Stage.prototype.addNext = function (cb) {
         var game = this.game;
 
-        var nextWidth = util.random(this.minWidth, this.maxWidth);
+        var nextWidth = game.rnd.between(this.minWidth, this.maxWidth);
         var nextMargin = 20;
-        var nextX = util.random(this.currEdgeX + nextMargin, game.width - nextWidth - nextMargin);
+        var nextX = game.rnd.between(this.currEdgeX + nextMargin, game.width - nextWidth - nextMargin);
 
         // 来一个 food
         var foodWidth = 24;
         var foodMargin = 10;
         var food = null;
         var foodX = nextX;
-        var hasFood = !!util.random(0, 1) // 先验概率
+        var hasFood = !!game.rnd.between(0, 1) // 先验概率
             && nextX - this.currEdgeX >= foodWidth + foodMargin * 2; // 间距是否足够放
         if (hasFood) {
-            foodX = util.random(this.currEdgeX + foodMargin, nextX - foodMargin - foodWidth);
+            foodX = game.rnd.between(this.currEdgeX + foodMargin, nextX - foodMargin - foodWidth);
             // foodX = this.currEdgeX + foodMargin;
             food = this._createFood();
             var moveFood = game.add.tween(food.getEl())
