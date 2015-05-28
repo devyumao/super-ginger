@@ -7,8 +7,11 @@ define(function (require) {
 
     var Food = require('./Food');
 
-    var Stage = function (game) {
+    var Stage = function (game, options) {
         this.game = game;
+
+        this.index = options.index;
+        this.imageName = 'stage-' + this.index;
 
         this.prev = null;
         this.curr = null;
@@ -16,7 +19,7 @@ define(function (require) {
         this.spot = null;
         this.food = null;
 
-        this.height = 235; // TODO: set to global
+        this.height = game.cache.getImage(this.imageName).height; // TODO: set to global
         this.currEdgeX = 110;
         this.minWidth = 24;
         this.maxWidth = 110;
@@ -31,8 +34,11 @@ define(function (require) {
         var game = this.game;
 
         // var curr = game.add.image(0, game.height - this.height, 'stage');
-        var curr = game.add.image((game.width - this.maxWidth) / 2, game.height - 150, 'stage');
-        curr.scale.set(this.maxWidth, this.height);
+        var curr = game.add.tileSprite(
+            (game.width - this.maxWidth) / 2, game.height - 150 - (this.height - 235), // TODO: config
+            this.maxWidth, this.height,
+            this.imageName
+        );
         this.curr = curr;
     };
 
@@ -42,12 +48,12 @@ define(function (require) {
         // 初始化 next
         // 初始 next 限制宽度与距离，使得首次难度不要太奇葩
         var nextWidth = this.maxWidth;
-        var next = game.add.image(
-            game.width,
-            game.height - this.height,
-            'stage'
+        var next = game.add.tileSprite(
+            game.width, game.height - this.height,
+            nextWidth, this.height,
+            this.imageName
         );
-        next.scale.set(nextWidth, this.height);
+        next.tilePosition.x = -game.rnd.between(0, 300 - this.maxWidth);
         this.next = next;
         this.spot = this._createSpot(next);
 
@@ -77,8 +83,8 @@ define(function (require) {
     };
 
     Stage.prototype._createSpot = function (pillar) {
-        var spot = this.game.add.image(0.5, 0, 'spot');
-        spot.scale.set(this.spotWidth / pillar.width, 8 / pillar.height); // XXX: 先缩放柱子
+        var spot = this.game.add.image(pillar.width / 2, this.height - 235, 'spot');
+        spot.scale.set(this.spotWidth, 8); // XXX: 先缩放柱子
         spot.anchor.set(0.5, 0);
         pillar.addChild(spot);
 
@@ -92,7 +98,7 @@ define(function (require) {
             game,
             {
                 x: game.width,
-                y: game.height - this.height + 10 // TODO: global
+                y: game.height - 235 + 10 // TODO: global
             }
         );
 
@@ -123,12 +129,12 @@ define(function (require) {
         }
 
         // 来下一根柱子
-        var next = this.game.add.image(
-            game.width + nextX - foodX,
-            game.height - this.height,
-            'stage'
+        var next = game.add.tileSprite(
+            game.width + nextX - foodX, game.height - this.height,
+            nextWidth, this.height,
+            this.imageName
         );
-        next.scale.set(nextWidth, this.height);
+        next.tilePosition.x = -game.rnd.between(0, 300 - this.maxWidth); // TODO: 抽离
 
         var spot = this._createSpot(next);
 
@@ -171,7 +177,7 @@ define(function (require) {
 
     Stage.prototype.getSpotX = function () {
         var next = this.next;
-        return next.x + this.spot.x * next.width;
+        return next.x + this.spot.x;
     };
 
     Stage.prototype.getSpotRange = function () {

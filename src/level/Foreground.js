@@ -47,11 +47,16 @@ define(function (require) {
 
     Foreground.prototype.move = function (offsetX, cb) {
         var game = this.game;
+        var elements = this.elements;
 
         offsetX += '';
-        this.elements.forEach(function (el) {
+        var len = elements.length;
+        elements.forEach(function (el, index) {
             var move = game.add.tween(el)
                 .to({x: offsetX}, 300, Phaser.Easing.Linear.None);
+            if (cb && index === len - 1) {
+                move.onComplete.add(cb);
+            }
             move.start();
         });
     };

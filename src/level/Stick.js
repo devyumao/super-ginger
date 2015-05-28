@@ -21,12 +21,11 @@ define(function (require) {
         var game = this.game;
 
         if (this.image) {
-            this.trash && this.trash.destroy();
+            this.trash && this.trash.destroy(false);
             this.trash = this.image;
         }
 
-        var image = game.add.image(110, game.height - 235, 'stage');
-        image.scale.set(4, 0);
+        var image = game.add.tileSprite(110, game.height - 235, 5, 0.001, 'stick');
         image.anchor.set(0.5, 1);
         this.image = image;
     };

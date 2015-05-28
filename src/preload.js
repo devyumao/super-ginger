@@ -21,6 +21,14 @@ define(function (require) {
         game.load.spritesheet('boy-up', path + 'boy-up.png', 76, 106);
         game.load.spritesheet('boy-walk', path + 'boy-walk.png', 76, 106);
         game.load.spritesheet('boy-kick', path + 'boy-kick.png', 76, 103);
+
+        game.load.spritesheet('stick', path + 'stick.png', 5, 24);
+
+        game.load.spritesheet('bg-1', path + 'bg-1.png', 1582, 800);
+        game.load.spritesheet('bg-2', path + 'bg-2.png', 1783, 800);
+
+        game.load.spritesheet('stage-1', path + 'stage-1.png', 300, 266);
+        game.load.spritesheet('stage-2', path + 'stage-2.png', 300, 243);
     }
 
     function create() {

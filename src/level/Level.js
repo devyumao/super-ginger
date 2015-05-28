@@ -17,13 +17,32 @@ define(function (require) {
         this.isTouchEnabled = false;
 
         this.isFoodToBeAdded = false;
+
+        this.shouldBgScroll = false;
+
+        // this.theme = this.game.rnd.between(1, 2);
+        this.theme = 2;
     };
 
     Level.prototype._initMenuStatus = function () {
         var game = this.game;
 
+        var Background = require('./Background');
+        this.background = new Background(
+            game,
+            {
+                index: this.theme
+            }
+        );
+
         var Stage = require('./Stage');
-        this.stage = new Stage(game);
+        this.stage = new Stage(
+            game,
+            {
+                index: this.theme
+            }
+        );
+
         var Hero = require('./Hero');
         this.hero = new Hero(game);
 
@@ -41,8 +60,22 @@ define(function (require) {
         var game = this.game;
 
         if (this.status === 'play') {
+            var Background = require('./Background');
+            this.background = new Background(
+                game,
+                {
+                    index: this.theme
+                }
+            );
+
             var Stage = require('./Stage');
-            this.stage = new Stage(game);
+            this.stage = new Stage(
+                game,
+                {
+                    index: this.theme
+                }
+            );
+
             var Hero = require('./Hero');
             this.hero = new Hero(game);
 
@@ -211,7 +244,7 @@ define(function (require) {
 
                             if (stick.isInStage(stage)) { // 成功啦
                                 hero.walk(
-                                    nextEdgeX + 5,
+                                    nextEdgeX,
                                     function () {
                                         scoreboard.addScore(1);
 
@@ -221,7 +254,10 @@ define(function (require) {
                                             foodboard.update();
                                         }
 
-                                        foreground.move(currEdgeX - nextEdgeX);
+                                        me.shouldBgScroll = true;
+                                        foreground.move(currEdgeX - nextEdgeX, function () {
+                                            me.shouldBgScroll = false;
+                                        });
 
                                         stage.addNext(function () {
                                             stick.update();
@@ -233,7 +269,7 @@ define(function (require) {
                             }
                             else { // 走过了
                                 hero.walk(
-                                    currEdgeX + stick.getLength(),
+                                    currEdgeX + stick.getLength() + 12,
                                     function () {
                                         me._fail();
                                     }
@@ -249,7 +285,7 @@ define(function (require) {
             }
             else { // 长度不足
                 hero.walk(
-                    currEdgeX + stick.getLength(),
+                    currEdgeX + stick.getLength() + 12,
                     function () {
                         me.isTouchEnabled = false;
 
@@ -280,6 +316,10 @@ define(function (require) {
     Level.prototype.update = function () {
         if (this.status !== 'play') {
             return;
+        }
+
+        if (this.shouldBgScroll) {
+            this.background.scroll();
         }
 
         if (this.isHoldEnabled && this.isBeingHeld) {

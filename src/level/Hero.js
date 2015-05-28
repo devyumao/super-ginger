@@ -29,7 +29,7 @@ define(function (require) {
     Hero.prototype.setForPlay = function (useAnim, cb) {
         var game = this.game;
 
-        var x = 110 + 5;
+        var x = 110;
         var y = game.height - 235;
 
         if (useAnim) {
@@ -69,6 +69,8 @@ define(function (require) {
     Hero.prototype.walk = function (targetX, cb) {
         var game = this.game;
         var sprite = this.sprite;
+
+        sprite.bringToTop(); // 置顶
 
         // 不越过屏幕
         var maxX = game.width;
