@@ -5,6 +5,8 @@
 
 define(function (require) {
 
+    var config = require('./config');
+
     var Stick = function (game) {
         this.game = game;
         this.image = null;
@@ -25,13 +27,13 @@ define(function (require) {
             this.trash = this.image;
         }
 
-        var image = game.add.tileSprite(110, game.height - 235, 5, 0.001, 'stick');
+        var image = game.add.tileSprite(110, game.height - config.horizon, 5, 0.001, 'stick');
         image.anchor.set(0.5, 1);
         this.image = image;
     };
 
     Stick.prototype.lengthen = function () {
-        if (this.image.height < this.game.height - 235) {
+        if (this.image.height < this.game.height - config.horizon) {
             this.image.height += 6;
         }
     };
@@ -49,7 +51,7 @@ define(function (require) {
         var game = this.game;
 
         var rotate = game.add.tween(this.image)
-            .to({angle: 90}, 400, Phaser.Easing.Quadratic.Out);
+            .to({angle: 90}, 400, Phaser.Easing.Quadratic.In);
         cb && rotate.onComplete.add(cb);
         rotate.start();
     };
@@ -58,7 +60,7 @@ define(function (require) {
         var game = this.game;
 
         var rotate = game.add.tween(this.image)
-            .to({angle: 180}, 250, Phaser.Easing.Quadratic.Out, false, 100);
+            .to({angle: 180}, 250, Phaser.Easing.Quadratic.In, false, 100);
         cb && rotate.onComplete.add(cb);
         rotate.start();
     };

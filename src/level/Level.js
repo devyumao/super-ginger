@@ -6,6 +6,22 @@
 define(function (require) {
 
     var global = require('common/global');
+    var config = require('./config');
+
+    var Background = require('./Background');
+    var Midground = require('./Midground');
+    var Foreground = require('./Foreground');
+
+    var Start = require('./Start');
+    var MenuBtns = require('./MenuBtns');
+    var End = require('./End');
+
+    var Stage = require('./Stage');
+    var Hero = require('./Hero');
+    var Stick = require('./Stick');
+
+    var Scoreboard = require('./Scoreboard');
+    var Foodboard = require('./Foodboard');
 
     var Level = function () {
     };
@@ -18,35 +34,41 @@ define(function (require) {
 
         this.isFoodToBeAdded = false;
 
-        this.shouldBgScroll = false;
+        this.shouldMgScroll = false;
 
-        // this.theme = this.game.rnd.between(1, 2);
-        this.theme = 2;
+        this.theme = this.game.rnd.between(1, 3);
+        // this.theme = 3;
+    };
+
+    Level.prototype._initView = function () {
+        var game = this.game;
+
+        this.background = new Background(game, {index: this.theme});
+
+        this.farMidground = new Midground(
+            game,
+            {
+                index: this.theme,
+                imagePrefix: 'mg-far'
+            }
+        );
+
+        this.nearMidground = new Midground(
+            game,
+            {
+                index: this.theme,
+                imagePrefix: 'mg-near'
+            }
+        );
     };
 
     Level.prototype._initMenuStatus = function () {
+        this._initView();
+
         var game = this.game;
 
-        var Background = require('./Background');
-        this.background = new Background(
-            game,
-            {
-                index: this.theme
-            }
-        );
-
-        var Stage = require('./Stage');
-        this.stage = new Stage(
-            game,
-            {
-                index: this.theme
-            }
-        );
-
-        var Hero = require('./Hero');
+        this.stage = new Stage(game, {index: this.theme});
         this.hero = new Hero(game);
-
-        var Start = require('./Start');
         this.start = new Start(
             game,
             {
@@ -54,29 +76,19 @@ define(function (require) {
                 context: this
             }
         );
+        this.menuBtns = new MenuBtns(game);
+
+        // new End(game, {score: 20});
     };
 
     Level.prototype._initPlayStatus = function () {
         var game = this.game;
 
         if (this.status === 'play') {
-            var Background = require('./Background');
-            this.background = new Background(
-                game,
-                {
-                    index: this.theme
-                }
-            );
+            this._initView();
 
-            var Stage = require('./Stage');
-            this.stage = new Stage(
-                game,
-                {
-                    index: this.theme
-                }
-            );
+            this.stage = new Stage(game, {index: this.theme});
 
-            var Hero = require('./Hero');
             this.hero = new Hero(game);
 
             this.hero.setForPlay(false);
@@ -85,7 +97,10 @@ define(function (require) {
             this.isHoldEnabled = true;
         }
         else {
-            this.start.destroy();
+            // 销毁菜单元素
+            [this.start, this.menuBtns].forEach(function (item) {
+                item.destroy();
+            });
 
             this.hero.setForPlay(true);
             var me = this;
@@ -95,15 +110,12 @@ define(function (require) {
             });
         }
 
-        var Scoreboard = require('./Scoreboard');
+        
         this.scoreboard = new Scoreboard(game);
-        var Foodboard = require('./Foodboard');
         this.foodboard = new Foodboard(game);
 
-        var Stick = require('./Stick');
         this.stick = new Stick(game);
 
-        var Foreground = require('./Foreground');
         this.foreground = new Foreground(
             game,
             {
@@ -131,7 +143,13 @@ define(function (require) {
 
         this.stick.fall();
         this.hero.fall(function () {
-            me.state.restart(true, false, 'play');
+            me.game.plugins.screenShake.shake(10);
+            setTimeout(
+                function () {
+                    new End(me.game, {score: score});
+                },
+                400
+            );
         });
     };
 
@@ -140,7 +158,7 @@ define(function (require) {
 
         // 加分文本
         var pointsText = game.add.text(
-            this.stage.getSpotX(), game.height - 235,
+            this.stage.getSpotX(), game.height - config.horizon,
             '+1',
             {
                 fill: '#999'
@@ -168,7 +186,7 @@ define(function (require) {
         // 赞美之词
         var praiseText = game.add.text(
             game.width / 2, 160,
-            'Perfect!',
+            '赞哟!',
             {
                 fill: '#999'
             }
@@ -254,9 +272,9 @@ define(function (require) {
                                             foodboard.update();
                                         }
 
-                                        me.shouldBgScroll = true;
+                                        me.shouldMgScroll = true;
                                         foreground.move(currEdgeX - nextEdgeX, function () {
-                                            me.shouldBgScroll = false;
+                                            me.shouldMgScroll = false;
                                         });
 
                                         stage.addNext(function () {
@@ -314,21 +332,22 @@ define(function (require) {
     };
 
     Level.prototype.update = function () {
-        if (this.status !== 'play') {
-            return;
-        }
+        this.background.scroll();
 
-        if (this.shouldBgScroll) {
-            this.background.scroll();
-        }
+        if (this.status === 'play') {
+            if (this.shouldMgScroll) {
+                this.nearMidground.scroll(2);
+                this.farMidground.scroll(1);
+            }
 
-        if (this.isHoldEnabled && this.isBeingHeld) {
-            this.stick.lengthen();
-        }
+            if (this.isHoldEnabled && this.isBeingHeld) {
+                this.stick.lengthen();
+            }
 
-        var food = this.stage.getFood();
-        if (food && food.isStartingBeingEaten(this.hero)) {
-            this.isFoodToBeAdded = true;
+            var food = this.stage.getFood();
+            if (food && food.isStartingBeingEaten(this.hero)) {
+                this.isFoodToBeAdded = true;
+            }
         }
     };
 

@@ -5,10 +5,14 @@
 
 define(function (require) {
 
+    var global = require('common/global');
+    var color = require('common/color');
+
     var Scoreboard = function (game) {
         this.game = game;
         this.score = 0;
         this.text = null;
+        this.board = null;
 
         this._init();
     };
@@ -16,16 +20,20 @@ define(function (require) {
     Scoreboard.prototype._init = function () {
         var game = this.game;
 
+        var board = game.add.image(game.width / 2, 85, 'scoreboard');
+        board.anchor.set(0.5);
+        this.board = board;
+
         var text = game.add.text(
-            game.width / 2, 60,
+            0, 2,
             this.score + '',
             {
-                fill: '#999'
+                font: 'bold 48px ' + global.fontFamily,
+                fill: color.get('white')
             }
         );
-        text.anchor.set(0.5, 0);
-        text.fontSize = 40;
-
+        text.anchor.set(0.5);
+        board.addChild(text);
         this.text = text;
     };
 

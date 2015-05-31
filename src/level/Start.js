@@ -5,6 +5,9 @@
 
 define(function (require) {
 
+    var global = require('common/global');
+    var color = require('common/color');
+
     var Start = function (game, options) {
         this.game = game;
         this.button = null;
@@ -25,17 +28,23 @@ define(function (require) {
 
         var text = game.add.text(
             0, 0,
-            '开始',
+            '走 起',
             {
-                fill: '#fff'
+                font: 'bold 48px ' + global.fontFamily,
+                fill: color.get('white')
             }
         );
-        text.fontSize = 40;
         text.anchor.set(0.5);
-
         button.addChild(text);
 
         this.button = button;
+
+        this._shake();
+    };
+
+    Start.prototype._shake = function () {
+        this.game.add.tween(this.button)
+            .to({y: '-15'}, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     };
 
     Start.prototype.destroy = function () {

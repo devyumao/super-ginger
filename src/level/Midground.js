@@ -1,5 +1,5 @@
 /**
- * @file 背景
+ * @file 中景
  * @author yumao [zhangyu38@baidu.com]
  */
 
@@ -7,18 +7,19 @@ define(function (require) {
 
     var config = require('./config');
 
-    var Background = function (game, options) {
+    var Midground = function (game, options) {
         this.game = game;
         this.image = null;
+        this.imagePrefix = options.imagePrefix;
         this.index = options.index;
 
         this._init();
     };
 
-    Background.prototype._init = function () {
+    Midground.prototype._init = function () {
         var game = this.game;
 
-        var imageName = 'bg-' + this.index;
+        var imageName = this.imagePrefix + '-' + this.index;
         var image = game.add.tileSprite(
             0, 0,
             game.cache.getImage(imageName).width, game.height,
@@ -29,10 +30,10 @@ define(function (require) {
         // image.alpha = 0.8;
     };
 
-    Background.prototype.scroll = function () {
-        this.image.tilePosition.x -= 0.3;
+    Midground.prototype.scroll = function (offset) {
+        this.image.tilePosition.x -= offset;
     };
 
-    return Background;
+    return Midground;
 
 });

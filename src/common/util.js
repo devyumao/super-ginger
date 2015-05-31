@@ -5,17 +5,19 @@
 
 define(function (require) {
 
-    // function random(lower, upper) {
-    //     return Math.floor(lower + Math.random() * (upper - lower + 1));
-    // }
-
     function isArray(item) {
         return Object.prototype.toString.call(item).slice(8, -1) === 'Array';
     }
 
+    function proba(p) {
+        p = p * 10 || 1;
+        var odds = Math.floor(Math.random() * 10);
+        return p === 1 || odds < p;
+    }
+
     return {
-        // random: random,
-        isArray: isArray
+        isArray: isArray,
+        proba: proba
     };
 
 });

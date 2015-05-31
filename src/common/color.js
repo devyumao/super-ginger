@@ -6,7 +6,9 @@
 define(function (require) {
 
     var colors = {
-        'bg': '#fff'
+        bg: '#fff',
+        white: '#fff',
+        black: '#000'
     };
 
     function get(color) {

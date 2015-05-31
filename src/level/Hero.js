@@ -5,6 +5,8 @@
 
 define(function (require) {
 
+    var config = require('./config');
+
     var Hero = function (game) {
         this.game = game;
         this.index = 0;
@@ -17,7 +19,7 @@ define(function (require) {
     Hero.prototype._init = function () {
         var game = this.game;
 
-        var sprite = game.add.sprite((game.width + 76 / 2) / 2, game.height - 150, 'boy-down');
+        var sprite = game.add.sprite((game.width + 76 / 2) / 2, game.height - 150);
         sprite.scale.set(0.5);
         sprite.anchor.set(1, 1);
         this.sprite = sprite;
@@ -30,12 +32,19 @@ define(function (require) {
         var game = this.game;
 
         var x = 110;
-        var y = game.height - 235;
+        var y = game.height - config.horizon;
 
         if (useAnim) {
             var move = game.add.tween(this.sprite)
                 .to({x: x, y: y}, 200, Phaser.Easing.Linear.None);
-            cb && move.onComplete.add(cb);
+            move.onComplete.add(
+                function () {
+                    this.down();
+                    cb && cb();
+                },
+                this
+            );
+            this._act('walk', 14, true);
             move.start();
         }
         else {
@@ -48,7 +57,10 @@ define(function (require) {
     Hero.prototype._act = function (action, frameRate, loop) {
         var sprite = this.sprite;
         var key = 'boy-' + action;
-        sprite.key !== key && sprite.loadTexture(key); // 避免重载（loadTexture 较耗内存）
+        if (sprite.key === key) {
+            return;
+        }
+        sprite.loadTexture(key);
         !sprite.animations.getAnimation(action) && sprite.animations.add(action);
         sprite.animations.play(action, frameRate, !!loop);
         console.log(action);
@@ -104,7 +116,12 @@ define(function (require) {
         var sprite = this.sprite;
 
         var fall = game.add.tween(sprite)
-            .to({y: game.height + sprite.height}, 250, Phaser.Easing.Linear.None, false, 100);
+            .to(
+                {
+                    y: game.height + (!this.upsideDown ? sprite.height : 0)
+                },
+                300, Phaser.Easing.Quadratic.In, false, 100
+            );
         cb && fall.onComplete.add(cb);
         fall.start();
     };

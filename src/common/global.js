@@ -64,6 +64,8 @@ define(function (require) {
     }
 
     return {
+        fontFamily: '"Helvetica Neue", Helvetica, STHeiTi, sans-serif',
+
         initFoodCount: initFoodCount,
         getFoodCount: getFoodCount,
         setFoodCount: setFoodCount,

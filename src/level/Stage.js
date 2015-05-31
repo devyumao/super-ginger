@@ -5,6 +5,8 @@
 
 define(function (require) {
 
+    var util = require('common/util');
+    var config = require('./config');
     var Food = require('./Food');
 
     var Stage = function (game, options) {
@@ -19,7 +21,7 @@ define(function (require) {
         this.spot = null;
         this.food = null;
 
-        this.height = game.cache.getImage(this.imageName).height; // TODO: set to global
+        this.height = game.cache.getImage(this.imageName).height;
         this.currEdgeX = 110;
         this.minWidth = 24;
         this.maxWidth = 110;
@@ -35,7 +37,7 @@ define(function (require) {
 
         // var curr = game.add.image(0, game.height - this.height, 'stage');
         var curr = game.add.tileSprite(
-            (game.width - this.maxWidth) / 2, game.height - 150 - (this.height - 235), // TODO: config
+            (game.width - this.maxWidth) / 2, game.height - 150 - (this.height - config.horizon),
             this.maxWidth, this.height,
             this.imageName
         );
@@ -83,7 +85,7 @@ define(function (require) {
     };
 
     Stage.prototype._createSpot = function (pillar) {
-        var spot = this.game.add.image(pillar.width / 2, this.height - 235, 'spot');
+        var spot = this.game.add.image(pillar.width / 2, this.height - config.horizon, 'spot');
         spot.scale.set(this.spotWidth, 8); // XXX: 先缩放柱子
         spot.anchor.set(0.5, 0);
         pillar.addChild(spot);
@@ -98,7 +100,7 @@ define(function (require) {
             game,
             {
                 x: game.width,
-                y: game.height - 235 + 10 // TODO: global
+                y: game.height - config.horizon + 10
             }
         );
 
@@ -117,7 +119,7 @@ define(function (require) {
         var foodMargin = 10;
         var food = null;
         var foodX = nextX;
-        var hasFood = !!game.rnd.between(0, 1) // 先验概率
+        var hasFood = util.proba(0.6) // 先验概率
             && nextX - this.currEdgeX >= foodWidth + foodMargin * 2; // 间距是否足够放
         if (hasFood) {
             foodX = game.rnd.between(this.currEdgeX + foodMargin, nextX - foodMargin - foodWidth);
