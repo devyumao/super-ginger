@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Super Ginger</title>
+    <title>超能姜饼人</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,7 +14,6 @@
     </style>
     <script src="dep/esl.js"></script>
     <script src="dep/phaser-no-physics.min.js"></script>
-    <script src="dep/phaser-state-transition.min.js"></script>
     <script src="dep/phaser-screen-shake.js"></script>
     <script>
     require.config({
@@ -25,6 +24,7 @@
 <body>
     <script>
     require(['main'], function (main) {
+        require('common/global').setBasePath('src');
         main.init();
     });
     </script>

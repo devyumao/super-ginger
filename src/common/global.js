@@ -5,8 +5,11 @@
 
 define(function (require) {
 
-    var storagePrefix = 'ginger-';
+    var serverData = require('common/serverData');
 
+    var basePath = '';
+
+    var storagePrefix = 'ginger-';
     var storageKey = {
         foodCount: storagePrefix + 'food-count',
         highest: storagePrefix + 'highest'
@@ -15,7 +18,19 @@ define(function (require) {
     var foodCount;
     var highest;
 
-    function initFoodCount(cb) {
+    var global = {};
+
+    global.fontFamily = '"Helvetica Neue", Helvetica, STHeiTi, sans-serif';
+
+    global.setBasePath = function (path) {
+        basePath = path;
+    };
+
+    global.getBasePath = function () {
+        return basePath;
+    };
+
+    global.initFoodCount = function (cb) {
         var key = storageKey.foodCount;
         foodCount = localStorage.getItem(key);
         if (!foodCount) {
@@ -26,20 +41,20 @@ define(function (require) {
             foodCount = +foodCount;
         }
         cb && cb();
-    }
+    };
 
-    function getFoodCount() {
+    global.getFoodCount = function () {
         return foodCount;
-    }
+    };
 
-    function setFoodCount(count) {
+    global.setFoodCount = function (count) {
         foodCount = count;
         var key = storageKey.foodCount;
         // TODO: server
         localStorage.setItem(key, count);
-    }
+    };
 
-    function initHighest(cb) {
+    global.initHighest = function (cb) {
         var key = storageKey.highest;
         highest = localStorage.getItem(key);
         if (!highest) {
@@ -50,29 +65,19 @@ define(function (require) {
             highest = +highest;
         }
         cb && cb();
-    }
+    };
 
-    function getHighest() {
+    global.getHighest = function () {
         return highest;
-    }
+    };
 
-    function setHighest(score) {
+    global.setHighest = function (score) {
         highest = score;
         var key = storageKey.highest;
         // TODO: server
         localStorage.setItem(key, score);
-    }
-
-    return {
-        fontFamily: '"Helvetica Neue", Helvetica, STHeiTi, sans-serif',
-
-        initFoodCount: initFoodCount,
-        getFoodCount: getFoodCount,
-        setFoodCount: setFoodCount,
-
-        initHighest: initHighest,
-        getHighest: getHighest,
-        setHighest: setHighest
     };
+
+    return global;
 
 });

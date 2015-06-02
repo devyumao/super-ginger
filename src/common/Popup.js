@@ -43,7 +43,6 @@ define(function (require) {
 
         var body = game.add.image(game.width / 2, game.height);
         body.anchor.set(0.5, 0);
-        body.inputEnabled = true;
         this.body = body;
 
         var topEdge = game.add.image(0, 0, 'popup-edge');

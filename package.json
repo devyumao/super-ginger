@@ -1,0 +1,15 @@
+{
+    "name": "crossword",
+    "version": "1.0.0",
+    "description": "Crossword Space",
+    "author": "@yumao",
+    "dependencies": {},
+    "devDependencies": {
+        "gulp": "^3.8.11",
+        "gulp-amd-optimizer": "",
+        "gulp-concat": "",
+        "gulp-uglify": "",
+        "event-stream": "",
+        "del": ""
+    }
+}

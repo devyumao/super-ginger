@@ -24,7 +24,8 @@ define(function (require) {
                 position: 'right',
                 icon: 'food',
                 onClick: function () {
-                    
+                    var StorePopup = require('./StorePopup');
+                    new StorePopup(game);
                 }
             },
             {
@@ -39,8 +40,8 @@ define(function (require) {
                 position: 'left',
                 icon: 'icon-heart',
                 onClick: function () {
-                    var thankPopup = require('./thankPopup');
-                    new thankPopup(game);
+                    var ThankPopup = require('./ThankPopup');
+                    new ThankPopup(game);
                 }
             }
         ];

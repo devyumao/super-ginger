@@ -10,13 +10,13 @@ define(function (require) {
     function preload() {
         var game = this.game;
 
-        var path = 'src/img/';
+        var path = global.getBasePath() +'/img/';
 
         // TODO: 组织 img 目录
         game.load.image('spot', path + 'spot.png');
         game.load.image('food', path + 'food.png');
 
-        ['black', 'white', 'beige'].forEach(function (color) {
+        ['black', 'white', 'beige', 'orange'].forEach(function (color) {
             game.load.image('pixel-' + color, path + 'pixel/' + color +'.png');
         });
 
@@ -61,12 +61,12 @@ define(function (require) {
     function create() {
         var me = this;
 
+
+        global.getBasePath() === 'src' && global.initFoodCount(); // TODO: dev or prod
         // FIX: 并发请求
-        global.initFoodCount(function () {
-            global.initHighest(function () {
-                // 与以往不同，menu -> level 是连贯场景，所以实际是同一 state
-                me.state.start('level', true, false, 'menu');
-            });
+        global.initHighest(function () {
+            // 与以往不同，menu -> level 是连贯场景，所以实际是同一 state
+            me.state.start('level', true, false, 'menu');
         });
     }
 
