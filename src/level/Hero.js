@@ -57,6 +57,7 @@ define(function (require) {
     Hero.prototype._act = function (action, frameRate, loop) {
         var sprite = this.sprite;
         var key = 'boy-' + action;
+        // key = 'girl-down';
         if (sprite.key === key) {
             return;
         }

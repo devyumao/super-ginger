@@ -22,23 +22,25 @@ define(function (require) {
         var btnConfigs = [
             {
                 position: 'right',
-                icon: 'icon-food',
+                icon: 'food',
                 onClick: function () {
-
+                    
                 }
             },
             {
                 position: 'right',
                 icon: 'icon-hero',
                 onClick: function () {
-
+                    var FamilyPopup = require('./FamilyPopup');
+                    new FamilyPopup(game);
                 }
             },
             {
                 position: 'left',
                 icon: 'icon-heart',
                 onClick: function () {
-
+                    var thankPopup = require('./thankPopup');
+                    new thankPopup(game);
                 }
             }
         ];
@@ -71,11 +73,11 @@ define(function (require) {
             btn.anchor.set(0.5);
             group.add(btn);
 
-            if (config.icon === 'icon-heart') {
-                var icon = game.add.image(0, 0, config.icon);
-                icon.anchor.set(0.5);
-                btn.addChild(icon);
-            }
+            var icon = game.add.image(0, 0, config.icon);
+            icon.anchor.set(0.5);
+            icon.width = 34;
+            icon.height = icon.width;
+            btn.addChild(icon);
 
             ++posConfig[pos].index;
         });

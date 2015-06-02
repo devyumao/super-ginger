@@ -8,7 +8,8 @@ define(function (require) {
     var colors = {
         bg: '#fff',
         white: '#fff',
-        black: '#000'
+        black: '#000',
+        chocolate: '#a45d35'
     };
 
     function get(color) {

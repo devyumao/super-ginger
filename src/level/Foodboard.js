@@ -6,6 +6,7 @@
 define(function (require) {
 
     var global = require('common/global');
+    var color = require('common/color');
 
     var Foodboard = function (game) {
         this.game = game;
@@ -19,18 +20,19 @@ define(function (require) {
         var game = this.game;
 
         var text = game.add.text(
-            game.width - 50, 20,
+            game.width - 63, 20,
             global.getFoodCount() + '',
             {
-                fill: '#999'
+                font: 'bold 30px ' + global.fontFamily,
+                fill: color.get('white')
             }
         );
         text.anchor.set(1, 0);
-        text.fontSize = 20;
         this.text = text;
 
-        var legend = game.add.image(game.width - 20, 20, 'food');
-        legend.scale.set(20);
+        var legend = game.add.image(game.width - 20, 18, 'food');
+        legend.width = 35;
+        legend.height = legend.width;
         legend.anchor.set(1, 0);
         this.legend = legend;
     };

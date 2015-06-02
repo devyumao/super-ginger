@@ -15,7 +15,8 @@ define(function (require) {
 
     Food.prototype._init = function (options) {
         var image = this.game.add.image(options.x, options.y, 'food');
-        image.scale.set(20);
+        image.width = 25;
+        image.height = image.width;
         this.image = image;
         this._shake();
     };

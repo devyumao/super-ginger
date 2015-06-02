@@ -28,12 +28,8 @@ define(function (require) {
     };
 
     End.prototype._initMask = function () {
-        var game = this.game;
-
-        var mask = game.add.image(0, 0, 'pixel-black');
-        mask.scale.set(game.width, game.height);
-        mask.alpha = 0.6;
-        this.mask = mask;
+        var Mask = require('common/Mask');
+        this.mask = new Mask(this.game, {alpha: 0.6});
     };
 
     End.prototype._initBody = function () {
@@ -124,7 +120,7 @@ define(function (require) {
             },
             {
                 texture: 'end-btn',
-                text: '返回老家',
+                text: '返回菜单',
                 onClick: function () {
                     game.state.start('level', true, false, 'menu');
                 }
@@ -157,27 +153,11 @@ define(function (require) {
     };
 
     End.prototype._show = function () {
-        var game = this.game;
-
-        [this.mask, this.body].forEach(function (el) {
-            game.add.tween(el)
-                .from({alpha: 0}, 500, Phaser.Easing.Quadratic.InOut, true);
-        });
+        var duration = 500;
+        this.mask.show(duration);
+        this.game.add.tween(this.body)
+            .from({alpha: 0}, duration, Phaser.Easing.Quadratic.InOut, true);
     };
-
-    // End.prototype._hide = function () {
-    //     var game = this.game;
-
-    //     [this.mask, this.body].forEach(function (el) {
-    //         game.add.tween(el)
-    //             .to({alpha: 0}, 500, Phaser.Easing.Quadratic.InOut, true);
-    //     });
-    // };
-
-    // End.prototype._destroy = function () {
-    //     this.mask.destroy();
-    //     this.body.destroy();
-    // };
 
     return End;
 

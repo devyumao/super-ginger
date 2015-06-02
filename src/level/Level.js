@@ -11,6 +11,7 @@ define(function (require) {
     var Background = require('./Background');
     var Midground = require('./Midground');
     var Foreground = require('./Foreground');
+    var Fog = require('./Fog');
 
     var Start = require('./Start');
     var MenuBtns = require('./MenuBtns');
@@ -44,7 +45,6 @@ define(function (require) {
         var game = this.game;
 
         this.background = new Background(game, {index: this.theme});
-
         this.farMidground = new Midground(
             game,
             {
@@ -52,7 +52,6 @@ define(function (require) {
                 imagePrefix: 'mg-far'
             }
         );
-
         this.nearMidground = new Midground(
             game,
             {
@@ -60,6 +59,7 @@ define(function (require) {
                 imagePrefix: 'mg-near'
             }
         );
+        this.fog = new Fog(game);
     };
 
     Level.prototype._initMenuStatus = function () {
@@ -78,6 +78,13 @@ define(function (require) {
         );
         this.menuBtns = new MenuBtns(game);
 
+        var title = game.add.image(game.width / 2, 100, 'title');
+        title.scale.set(0.9);
+        title.anchor.set(0.5, 0);
+        title.alpha = 0.75;
+        this.title = title;
+
+        // for test
         // new End(game, {score: 20});
     };
 
@@ -98,7 +105,7 @@ define(function (require) {
         }
         else {
             // 销毁菜单元素
-            [this.start, this.menuBtns].forEach(function (item) {
+            [this.title, this.start, this.menuBtns].forEach(function (item) {
                 item.destroy();
             });
 
@@ -161,7 +168,7 @@ define(function (require) {
             this.stage.getSpotX(), game.height - config.horizon,
             '+1',
             {
-                fill: '#999'
+                fill: '#333'
             }
         );
         pointsText.anchor.set(0.5, 1);
@@ -171,7 +178,7 @@ define(function (require) {
         var duration = 700;
 
         var showPoints = game.add.tween(pointsText)
-            .to({alpha: 1}, duration * 0.5, Phaser.Easing.Quadratic.Out, false);
+            .to({alpha: 0.5}, duration * 0.5, Phaser.Easing.Quadratic.Out, false);
         var hidePoints = game.add.tween(pointsText)
             .to({alpha: 0}, duration * 0.5, Phaser.Easing.Quadratic.In, false);
         var risePoints = game.add.tween(pointsText)
@@ -186,16 +193,16 @@ define(function (require) {
         // 赞美之词
         var praiseText = game.add.text(
             game.width / 2, 160,
-            '赞哟!',
+            '赞 哟 !',
             {
-                fill: '#999'
+                fill: '#333'
             }
         );
         praiseText.anchor.set(0.5, 0);
         praiseText.fontSize = 36;
         praiseText.alpha = 0;
         var showPraise = game.add.tween(praiseText)
-            .to({alpha: 1}, 400, Phaser.Easing.Quadratic.Out, false);
+            .to({alpha: 0.5}, 400, Phaser.Easing.Quadratic.Out, false);
         var hidePraise = game.add.tween(praiseText)
             .to({alpha: 0}, 400, Phaser.Easing.Quadratic.In, false, 300);
         hidePraise.onComplete.add(function () {
@@ -206,7 +213,7 @@ define(function (require) {
     };
 
     function onInputDown () {
-        // this.isBeingHeld = true;
+        // this._showReward();
 
         var hero = this.hero;
 

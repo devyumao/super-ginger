@@ -16,14 +16,19 @@ define(function (require) {
         game.load.image('spot', path + 'spot.png');
         game.load.image('food', path + 'food.png');
 
-        game.load.image('pixel-black', path + 'pixel-black.png');
+        ['black', 'white', 'beige'].forEach(function (color) {
+            game.load.image('pixel-' + color, path + 'pixel/' + color +'.png');
+        });
 
+        game.load.image('title', path + 'title.png');
         game.load.image('start', path + 'start.png');
-        game.load.image('menu-btn', path + 'menu-btn.png');
 
+        game.load.image('menu-btn', path + 'menu-btn.png');
         game.load.image('icon-heart', path + 'icon-heart.png');
+        game.load.image('icon-hero', path + 'icon-hero.png');
 
         game.load.image('scoreboard', path + 'scoreboard.png');
+        game.load.image('popup-edge', path + 'popup-edge.png');
 
         game.load.image('end-board', path + 'end-board.png');
         game.load.image('end-btn', path + 'end-btn.png');
@@ -33,6 +38,8 @@ define(function (require) {
         game.load.spritesheet('boy-up', path + 'boy-up.png', 76, 106);
         game.load.spritesheet('boy-walk', path + 'boy-walk.png', 76, 106);
         game.load.spritesheet('boy-kick', path + 'boy-kick.png', 76, 103);
+
+        game.load.spritesheet('girl-down', path + 'girl-down.png', 80, 109);
 
         game.load.spritesheet('stick', path + 'stick.png', 5, 24);
 
@@ -47,6 +54,8 @@ define(function (require) {
         game.load.spritesheet('stage-1', path + 'stage-1.png', 300, 266);
         game.load.spritesheet('stage-2', path + 'stage-2.png', 300, 243);
         game.load.spritesheet('stage-3', path + 'stage-3.png', 300, 247);
+
+        game.load.image('thanks', path + 'thanks.png');
     }
 
     function create() {
