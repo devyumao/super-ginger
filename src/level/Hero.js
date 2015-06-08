@@ -7,11 +7,18 @@ define(function (require) {
 
     var config = require('./config');
 
-    var Hero = function (game) {
+    var Hero = function (game, options) {
         this.game = game;
-        this.index = 0;
+        this.index = options.index;
         this.sprite = null;
         this.upsideDown = false;
+
+        var heroConfig = require('common/global').herosConfig[this.index];
+        for (var key in heroConfig) {
+            if (heroConfig.hasOwnProperty(key)) {
+                this[key] = heroConfig[key];
+            }
+        }
 
         this._init();
     };
@@ -19,8 +26,11 @@ define(function (require) {
     Hero.prototype._init = function () {
         var game = this.game;
 
-        var sprite = game.add.sprite((game.width + 76 / 2) / 2, game.height - 150);
-        sprite.scale.set(0.5);
+        var sprite = game.add.sprite(
+            (game.width + this.width * this.scale) / 2,
+            game.height - config.initialHorizon
+        );
+        sprite.scale.set(this.scale);
         sprite.anchor.set(1, 1);
         this.sprite = sprite;
 
@@ -31,7 +41,7 @@ define(function (require) {
     Hero.prototype.setForPlay = function (useAnim, cb) {
         var game = this.game;
 
-        var x = 110;
+        var x = 110 + this.paddingRight; // TODO: config
         var y = game.height - config.horizon;
 
         if (useAnim) {
@@ -44,7 +54,7 @@ define(function (require) {
                 },
                 this
             );
-            this._act('walk', 14, true);
+            this._act('walk', true);
             move.start();
         }
         else {
@@ -54,29 +64,28 @@ define(function (require) {
         }
     };
 
-    Hero.prototype._act = function (action, frameRate, loop) {
+    Hero.prototype._act = function (action, loop) {
         var sprite = this.sprite;
-        var key = 'boy-' + action;
-        // key = 'girl-down';
+        var key = [this.name, action].join('-');
+        // key = 'macaron';
         if (sprite.key === key) {
             return;
         }
         sprite.loadTexture(key);
         !sprite.animations.getAnimation(action) && sprite.animations.add(action);
-        sprite.animations.play(action, frameRate, !!loop);
-        console.log(action);
+        sprite.animations.play(action, this.actions[action].fps, !!loop);
     };
 
     Hero.prototype.down = function () {
-        this._act('down', 6, true);
+        this._act('down', true);
     };
 
     Hero.prototype.up = function () {
-        this._act('up', 10, true);
+        this._act('up', true);
     };
 
     Hero.prototype.kick = function () {
-        this._act('kick', 24);
+        this._act('kick');
     };
 
     Hero.prototype.walk = function (targetX, cb) {
@@ -87,6 +96,7 @@ define(function (require) {
 
         // 不越过屏幕
         var maxX = game.width;
+        targetX += this.paddingRight;
         if (targetX > maxX) {
             targetX = maxX;
         }
@@ -114,12 +124,11 @@ define(function (require) {
 
     Hero.prototype.fall = function (cb) {
         var game = this.game;
-        var sprite = this.sprite;
 
-        var fall = game.add.tween(sprite)
+        var fall = game.add.tween(this.sprite)
             .to(
                 {
-                    y: game.height + (!this.upsideDown ? sprite.height : 0)
+                    y: game.height + (!this.upsideDown ? this.height : 0)
                 },
                 300, Phaser.Easing.Quadratic.In, false, 100
             );
@@ -143,6 +152,10 @@ define(function (require) {
     Hero.prototype.getWidth = function () {
         return this.sprite.width;
     };
+
+    // Hero.prototype.getPaddingRight = function () {
+    //     return this.paddingRight;
+    // };
 
     return Hero;
 

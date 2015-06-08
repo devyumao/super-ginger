@@ -6,8 +6,6 @@
 define(function (require) {
 
     return {
-        horizon: 235,
-
         themes: {
             1: {
                 offset: -80,
@@ -18,7 +16,12 @@ define(function (require) {
             3: {
                 offset: 100
             }
-        }
+        },
+
+        initialHorizon: 150,
+        horizon: 235,
+
+        foodWidth: 25
     };
 
 });

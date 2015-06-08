@@ -5,6 +5,8 @@
 
 define(function (require) {
 
+    var config = require('./config');
+
     var Food = function (game, options) {
         this.game = game;
         this.image = null;
@@ -14,10 +16,11 @@ define(function (require) {
     };
 
     Food.prototype._init = function (options) {
-        var image = this.game.add.image(options.x, options.y, 'food');
-        image.width = 25;
-        image.height = image.width;
-        this.image = image;
+        var game = this.game;
+        var imageName = 'food-with-halo';
+
+        var padding = (game.cache.getImage(imageName).width - config.foodWidth) / 2;
+        this.image = game.add.image(options.x - padding, options.y - padding, 'food-with-halo');
         this._shake();
     };
 

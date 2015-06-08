@@ -5,9 +5,9 @@
 
 define(function (require) {
 
+    var ajax = require('common/ajax');
+    var url = require('common/url');
     var serverData = require('common/serverData');
-
-    var basePath = '';
 
     var storagePrefix = 'ginger-';
     var storageKey = {
@@ -15,12 +15,13 @@ define(function (require) {
         highest: storagePrefix + 'highest'
     };
 
-    var foodCount;
-    var highest;
 
     var global = {};
 
     global.fontFamily = '"Helvetica Neue", Helvetica, STHeiTi, sans-serif';
+
+
+    var basePath = '';
 
     global.setBasePath = function (path) {
         basePath = path;
@@ -29,6 +30,9 @@ define(function (require) {
     global.getBasePath = function () {
         return basePath;
     };
+
+
+    var foodCount;
 
     global.initFoodCount = function (cb) {
         var key = storageKey.foodCount;
@@ -48,11 +52,23 @@ define(function (require) {
     };
 
     global.setFoodCount = function (count) {
+        if (count === foodCount) {
+            return;
+        }
+
+        ajax.get({
+            url: count > foodCount ? url.ADD_FOOD : url.USE_FOOD,
+            data: {
+                count: Math.abs(count - foodCount)
+            }
+        });
+
         foodCount = count;
-        var key = storageKey.foodCount;
-        // TODO: server
-        localStorage.setItem(key, count);
+        localStorage.setItem(storageKey.foodCount, count);
     };
+
+
+    var highest;
 
     global.initHighest = function (cb) {
         var key = storageKey.highest;
@@ -77,6 +93,117 @@ define(function (require) {
         // TODO: server
         localStorage.setItem(key, score);
     };
+
+
+    global.baseActions = ['down', 'up', 'kick', 'walk'];
+
+    global.herosConfig = [
+        {
+            id: 0,
+            name: 'boy',
+            chName: '姜饼仔',
+            width: 76,
+            height: 106,
+            paddingRight: 6,
+            scale: 0.6,
+            actions: {
+                down: {fps: 6},
+                up: {fps: 10},
+                kick: {fps: 24},
+                walk: {fps: 28}
+            }
+        },
+        {
+            id: 1,
+            name: 'girl',
+            chName: '姜饼妹',
+            width: 85,
+            height: 112,
+            paddingRight: 4,
+            scale: 0.6,
+            actions: {
+                down: {fps: 6},
+                up: {fps: 10},
+                kick: {fps: 24},
+                walk: {fps: 28}
+            }
+        },
+        {
+            id: 2,
+            name: 'cone',
+            chName: '蛋筒夫人',
+            width: 109,
+            height: 190,
+            paddingRight: 15,
+            scale: 0.5,
+            actions: {
+                down: {fps: 5},
+                up: {fps: 15},
+                kick: {fps: 15},
+                walk: {fps: 15}
+            }
+        },
+        {
+            id: 3,
+            name: 'baguette',
+            chName: '法棍先生',
+            width: 101,
+            height: 159,
+            paddingRight: 10,
+            scale: 0.5,
+            actions: {
+                down: {fps: 6},
+                up: {fps: 10},
+                kick: {fps: 15},
+                walk: {fps: 15}
+            }
+        },
+        {
+            id: 4,
+            name: 'donut',
+            chName: '甜甜圈',
+            width: 90,
+            height: 112,
+            paddingRight: 10,
+            scale: 0.5,
+            actions: {
+                down: {fps: 6},
+                up: {fps: 10},
+                kick: {fps: 15},
+                walk: {fps: 15}
+            }
+        },
+        {
+            id: 5,
+            name: 'zongzi',
+            chName: '粽子糖',
+            width: 96,
+            height: 86,
+            paddingRight: 5,
+            scale: 0.47,
+            actions: {
+                down: {fps: 6},
+                up: {fps: 10},
+                kick: {fps: 15},
+                walk: {fps: 20}
+            }
+        },
+        {
+            id: 6,
+            name: 'cupcake',
+            chName: '杯糕小子',
+            width: 110,
+            height: 137,
+            paddingRight: 12,
+            scale: 0.5,
+            actions: {
+                down: {fps: 5},
+                up: {fps: 6},
+                kick: {fps: 15},
+                walk: {fps: 12}
+            }
+        }
+    ];
 
     return global;
 

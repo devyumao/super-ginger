@@ -9,6 +9,7 @@ define(function (require) {
         this.game = game;
         this.mask = null;
         this.body = null;
+        this.group = game.add.group();
         this.width = game.cache.getImage('popup-edge').width;
         this.height = 520;
         this.hasHeader = true;
@@ -20,7 +21,9 @@ define(function (require) {
     Popup.prototype._init = function () {
         this._initMask();
         this._initBody();
+        this._initContainer();
         this._initContent();
+        this._show();
     };
 
     Popup.prototype._initMask = function () {
@@ -43,7 +46,13 @@ define(function (require) {
 
         var body = game.add.image(game.width / 2, game.height);
         body.anchor.set(0.5, 0);
+        body.inputEnabled = true;
         this.body = body;
+
+        // for test
+        body.events.onInputUp.add(function() {
+            console.log('body');
+        });
 
         var topEdge = game.add.image(0, 0, 'popup-edge');
         topEdge.anchor.set(0.5, 0);
@@ -60,8 +69,14 @@ define(function (require) {
         bottomEdge.scale.y *= -1;
         bottomEdge.anchor.set(0.5, 0);
         body.addChild(bottomEdge);
+    };
 
-        this._show();
+    Popup.prototype._initContainer = function () {
+        var game = this.game;
+
+        var container = game.add.image(game.width / 2, game.height, 'transparent');
+        container.anchor.set(0.5, 0);
+        this.container = container;
     };
 
     Popup.prototype._initContent = function () {
@@ -69,16 +84,23 @@ define(function (require) {
 
     Popup.prototype._show = function () {
         this.mask.show(500);
-        this.game.add.tween(this.body)
-            .to({y: 150}, 600, Phaser.Easing.Back.Out, true);
+
+        var game = this.game;
+        [this.body, this.container].forEach(function (el) {
+            game.add.tween(el)
+                .to({y: 150}, 600, Phaser.Easing.Back.Out, true);
+        });
     };
 
     Popup.prototype._hide = function () {
         this.mask.hide(500);
 
         var game = this.game;
-        game.add.tween(this.body)
-            .to({y: game.height}, 600, Phaser.Easing.Back.In, true);
+        [this.body, this.container].forEach(function (el) {
+            game.add.tween(el)
+                .to({y: game.height}, 600, Phaser.Easing.Back.In, true);
+        });
+        // TODO: destroy
     };
 
     Popup.prototype._initHeader = function () {

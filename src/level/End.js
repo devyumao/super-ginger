@@ -127,7 +127,7 @@ define(function (require) {
             },
             {
                 texture: 'end-btn',
-                text: '再来一次',
+                text: '再玩一次',
                 onClick: function () {
                     game.state.start('level', true, false, 'play');
                 }

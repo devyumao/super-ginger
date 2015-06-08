@@ -34,7 +34,7 @@ define(function (require) {
 
     Stick.prototype.lengthen = function () {
         if (this.image.height < this.game.height - config.horizon) {
-            this.image.height += 6;
+            this.image.height += 8;
         }
     };
 
@@ -51,7 +51,7 @@ define(function (require) {
         var game = this.game;
 
         var rotate = game.add.tween(this.image)
-            .to({angle: 90}, 400, Phaser.Easing.Quadratic.In);
+            .to({angle: 90}, 400, Phaser.Easing.Quadratic.In, false, 150);
         cb && rotate.onComplete.add(cb);
         rotate.start();
     };

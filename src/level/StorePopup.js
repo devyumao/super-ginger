@@ -16,13 +16,13 @@ define(function (require) {
     util.inherits(StorePopup, Popup);
 
     StorePopup.prototype._initContent = function () {
-        // for text
+        // for test
         var game = this.game;
-        var body = this.body;
+        var container = this.container;
 
         var title = game.add.text(0, 60, '测试用');
         title.anchor.set(0.5, 0);
-        body.addChild(title);
+        container.addChild(title);
 
         var storeData = [
             {
@@ -38,7 +38,6 @@ define(function (require) {
                 money: 4.99
             }
         ];
-
         var href = encodeURIComponent(location.href.split('#')[0]);
         storeData.forEach(function (data, index) {
             var btn = game.add.button(
@@ -55,14 +54,14 @@ define(function (require) {
             );
             btn.scale.set(300, 60);
             btn.anchor.set(0.5);
-            body.addChild(btn);
+            container.addChild(btn);
 
             var text = game.add.text(
                 0, 155 + 100 * index,
                 data.food + ' 果子    ' + data.money
             );
             text.anchor.set(0.5, 0);
-            body.addChild(text);
+            container.addChild(text);
         });
     };
 

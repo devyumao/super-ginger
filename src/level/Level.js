@@ -62,13 +62,19 @@ define(function (require) {
         this.fog = new Fog(game);
     };
 
-    Level.prototype._initMenuStatus = function () {
+    Level.prototype._initBaseObjs = function () {
         this._initView();
 
         var game = this.game;
-
         this.stage = new Stage(game, {index: this.theme});
-        this.hero = new Hero(game);
+        this.hero = new Hero(game, {index: 6});
+    };
+
+    Level.prototype._initMenuStatus = function () {
+        this._initBaseObjs();
+
+        var game = this.game;
+        
         this.start = new Start(
             game,
             {
@@ -92,11 +98,7 @@ define(function (require) {
         var game = this.game;
 
         if (this.status === 'play') {
-            this._initView();
-
-            this.stage = new Stage(game, {index: this.theme});
-
-            this.hero = new Hero(game);
+            this._initBaseObjs();
 
             this.hero.setForPlay(false);
             this.stage.setForPlay(false);
@@ -263,10 +265,9 @@ define(function (require) {
                 hero.walk(
                     stage.getCurrEdgeX() + stage.getInterval(),
                     function () {
+                        me.isTouchEnabled = false;
                         if (!hero.isUpsideDown()) {
-                            me.isTouchEnabled = false;
                             // 没倒置，继续走
-
                             if (stick.isInStage(stage)) { // 成功啦
                                 hero.walk(
                                     nextEdgeX,

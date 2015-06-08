@@ -13,12 +13,16 @@ define(function (require) {
         var path = global.getBasePath() +'/img/';
 
         // TODO: 组织 img 目录
-        game.load.image('spot', path + 'spot.png');
-        game.load.image('food', path + 'food.png');
+        game.load.image('transparent', path + 'transparent.png');
 
         ['black', 'white', 'beige', 'orange'].forEach(function (color) {
             game.load.image('pixel-' + color, path + 'pixel/' + color +'.png');
         });
+
+        game.load.image('spot', path + 'spot.png');
+
+        game.load.image('food', path + 'food.png');
+        game.load.image('food-with-halo', path + 'food-with-halo.png');
 
         game.load.image('title', path + 'title.png');
         game.load.image('start', path + 'start.png');
@@ -34,12 +38,19 @@ define(function (require) {
         game.load.image('end-btn', path + 'end-btn.png');
         game.load.image('end-btn-share', path + 'end-btn-share.png');
 
-        game.load.spritesheet('boy-down', path + 'boy-down.png', 76, 103);
-        game.load.spritesheet('boy-up', path + 'boy-up.png', 76, 106);
-        game.load.spritesheet('boy-walk', path + 'boy-walk.png', 76, 106);
-        game.load.spritesheet('boy-kick', path + 'boy-kick.png', 76, 103);
-
-        game.load.spritesheet('girl-down', path + 'girl-down.png', 80, 109);
+        global.herosConfig.forEach(function (hero) {
+            var name = hero.name;
+            var actions = hero.actions;
+            for (var action in actions) {
+                if (actions.hasOwnProperty(action)) {
+                    game.load.spritesheet(
+                        [name, action].join('-'),
+                        path + name + '/' + action + '.png',
+                        hero.width, hero.height
+                    );
+                }
+            }
+        });
 
         game.load.spritesheet('stick', path + 'stick.png', 5, 24);
 
@@ -56,11 +67,18 @@ define(function (require) {
         game.load.spritesheet('stage-3', path + 'stage-3.png', 300, 247);
 
         game.load.image('thanks', path + 'thanks.png');
+
+        // for test
+        // game.load.spritesheet('cone', path + 'cone.png', 70, 181);
+        // game.load.spritesheet('baguette', path + 'baguette.png', 80, 157);
+        // game.load.spritesheet('donut', path + 'donut.png', 90, 90);
+        // game.load.spritesheet('zongzi', path + 'zongzi.png', 90, 82);
+        // game.load.spritesheet('cupcake', path + 'cupcake.png', 90, 135);
+        // game.load.spritesheet('macaron', path + 'macaron.png', 84, 101);
     }
 
     function create() {
         var me = this;
-
 
         global.getBasePath() === 'src' && global.initFoodCount(); // TODO: dev or prod
         // FIX: 并发请求

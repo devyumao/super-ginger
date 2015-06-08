@@ -6,7 +6,7 @@
 define(function (require) {
 
     var colors = {
-        bg: '#fff',
+        bg: '#000',
         white: '#fff',
         black: '#000',
         chocolate: '#a45d35'
