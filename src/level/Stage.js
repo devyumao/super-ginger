@@ -42,8 +42,8 @@ define(function (require) {
         this.curr = game.add.tileSprite(
             (game.width - this.maxWidth) / 2,
             game.height - config.initialHorizon - (this.height - config.horizon),
-            // this.maxWidth,
-            this.minWidth,
+            this.maxWidth,
+            // this.minWidth,
             this.height,
             this.imageName
         );
@@ -65,7 +65,7 @@ define(function (require) {
         this.spot = this._createSpot(next);
 
         var currX = 0;
-        currX = this.maxWidth - this.minWidth; // for test
+        // currX = this.maxWidth - this.minWidth; // for test
         var currY = game.height - this.height;
         var nextX = this.currEdgeX + game.rnd.between(40, 180);
 

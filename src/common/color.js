@@ -6,10 +6,16 @@
 define(function (require) {
 
     var colors = {
-        bg: '#000',
-        white: '#fff',
-        black: '#000',
-        chocolate: '#a45d35'
+        'bg': '#000',
+        'white': '#fff',
+        'black': '#000',
+        'dark-grey': '#555',
+        'darker-grey': '#333',
+        'chocolate': '#a45d35',
+        'beige': '#ffecb8',
+        'dark-beige': '#e1d0a1',
+        'coffee': '#554d36',
+        'yellow': '#ffcd43'
     };
 
     function get(color) {

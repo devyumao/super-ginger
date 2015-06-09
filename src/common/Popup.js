@@ -5,15 +5,31 @@
 
 define(function (require) {
 
+    var global = require('common/global');
+    var color = require('common/color');
+
     var Popup = function (game, options) {
+        if (!options) {
+            options = {};
+        }
+
         this.game = game;
+
         this.mask = null;
         this.body = null;
-        this.group = game.add.group();
+        this.header = null;
+        this.container = null;
+
+        this.elements = [];
+
+        this.hasHeader = !!options.hasHeader;
+
         this.width = game.cache.getImage('popup-edge').width;
-        this.height = 520;
-        this.hasHeader = true;
-        this.title = '标题';
+        this.height = options.height ? options.height : 520;
+        this.y = 120;
+        this.paddingBottom = options.paddingBottom ? options.paddingBottom : 30;
+
+        this.title = '超能家族';
 
         this._init();
     };
@@ -21,8 +37,11 @@ define(function (require) {
     Popup.prototype._init = function () {
         this._initMask();
         this._initBody();
+        this.hasHeader && this._initHeader();
         this._initContainer();
         this._initContent();
+        // this._initCover();
+
         this._show();
     };
 
@@ -48,11 +67,7 @@ define(function (require) {
         body.anchor.set(0.5, 0);
         body.inputEnabled = true;
         this.body = body;
-
-        // for test
-        body.events.onInputUp.add(function() {
-            console.log('body');
-        });
+        this.elements.push(body);
 
         var topEdge = game.add.image(0, 0, 'popup-edge');
         topEdge.anchor.set(0.5, 0);
@@ -60,35 +75,119 @@ define(function (require) {
 
         var edgeHeight = topEdge.height;
 
-        var container = game.add.image(0, edgeHeight, 'pixel-beige');
-        container.scale.set(this.width, this.height - edgeHeight * 2);
-        container.anchor.set(0.5, 0);
-        body.addChild(container);
+        var main = game.add.image(0, edgeHeight, 'pixel-beige');
+        main.scale.set(this.width, this.height - edgeHeight * 2);
+        main.anchor.set(0.5, 0);
+        body.addChild(main);
 
-        var bottomEdge = game.add.image(0, edgeHeight * 2 + container.height, 'popup-edge');
-        bottomEdge.scale.y *= -1;
+        var bottomEdge = game.add.image(0, edgeHeight * 2 + main.height, 'popup-edge');
+        bottomEdge.scale.y = -1;
         bottomEdge.anchor.set(0.5, 0);
         body.addChild(bottomEdge);
     };
 
-    Popup.prototype._initContainer = function () {
+    Popup.prototype._initHeader = function () {
         var game = this.game;
 
-        var container = game.add.image(game.width / 2, game.height, 'transparent');
-        container.anchor.set(0.5, 0);
+        var header = game.add.image(
+            -this.width / 2,
+            game.cache.getImage('popup-header').height / 2,
+            'popup-header'
+        );
+        header.anchor.set(0, 0.5);
+        this.body.addChild(header);
+        this.header = header;
+
+        var padding = 12;
+
+        var titleText = game.add.text(
+            padding, 3,
+            this.title,
+            {
+                font: '30px ' + global.fontFamily,
+                fill: color.get('white')
+            }
+        );
+        titleText.anchor.set(0, 0.5);
+        header.addChild(titleText);
+
+        var food = game.add.image(this.width - padding, 0, 'food');
+        food.width = 30;
+        food.height = food.width;
+        food.anchor.set(1, 0.5);
+        header.addChild(food);
+
+        var foodCountText = game.add.text(
+            food.x - food.width - 10, 3,
+            global.getFoodCount() + '',
+            {
+                font: 'bold 24px ' + global.fontFamily,
+                fill: color.get('dark-grey')
+            }
+        );
+        foodCountText.anchor.set(1, 0.5);
+        header.addChild(foodCountText);
+    };
+
+    Popup.prototype._initContainer = function () {
+        var game = this.game;
+        var margin = 12;
+
+        var container = game.add.image(
+            (game.width - this.width) / 2 + margin,
+            game.height + this.header.height
+        );
         this.container = container;
+        this.elements.push(container);
+
+        // 框定可视区域
+        var crop = this.game.add.graphics(0, 0);
+        crop.beginFill(0xffffff);
+        crop.drawRect(
+            container.x, game.height + this.header.height,
+            this.width - margin * 2, this.height - this.header.height - this.paddingBottom
+        );
+        crop.endFill();
+        container.mask = crop;
+        this.elements.push(crop);
     };
 
     Popup.prototype._initContent = function () {
     };
 
+    // // HACK
+    // Popup.prototype._initCover = function () {
+    //     var game = this.game;
+
+    //     var upperCover = game.add.button(
+    //         0, 0,
+    //         'transparent',
+    //         function () {
+    //             this._hide();
+    //         },
+    //         this
+    //     );
+    //     upperCover.scale.set(game.width, this.y);
+
+    //     var lowerCover = game.add.button(
+    //         0, 0,
+    //         'transparent',
+    //         function () {
+    //             this._hide();
+    //         },
+    //         this
+    //     );
+    //     upperCover.scale.set(game.width, this.y);
+    // };
+
     Popup.prototype._show = function () {
         this.mask.show(500);
 
         var game = this.game;
-        [this.body, this.container].forEach(function (el) {
+        var y = this.y;
+        this.elements.forEach(function (el) {
             game.add.tween(el)
-                .to({y: 150}, 600, Phaser.Easing.Back.Out, true);
+                .to({y: y - game.height + ''}, 600, Phaser.Easing.Back.Out, true);
         });
     };
 
@@ -96,17 +195,15 @@ define(function (require) {
         this.mask.hide(500);
 
         var game = this.game;
-        [this.body, this.container].forEach(function (el) {
-            game.add.tween(el)
-                .to({y: game.height}, 600, Phaser.Easing.Back.In, true);
+        var y = this.y;
+        this.elements.forEach(function (el) {
+            var move = game.add.tween(el)
+                .to({y: game.height - y + ''}, 600, Phaser.Easing.Back.In);
+            move.onComplete.add(function () {
+                el.destroy();
+            });
+            move.start();
         });
-        // TODO: destroy
-    };
-
-    Popup.prototype._initHeader = function () {
-        var game = this.game;
-        var header = game.add.image();
-        this.body.addChild(header);
     };
 
     return Popup;

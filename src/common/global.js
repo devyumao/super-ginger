@@ -5,6 +5,8 @@
 
 define(function (require) {
 
+    // TODO: big init
+
     var ajax = require('common/ajax');
     var url = require('common/url');
     var serverData = require('common/serverData');
@@ -12,9 +14,9 @@ define(function (require) {
     var storagePrefix = 'ginger-';
     var storageKey = {
         foodCount: storagePrefix + 'food-count',
-        highest: storagePrefix + 'highest'
+        highest: storagePrefix + 'highest',
+        selected: storagePrefix + 'selected'
     };
-
 
     var global = {};
 
@@ -95,6 +97,20 @@ define(function (require) {
     };
 
 
+    var selected = localStorage.getItem(storageKey.selected);
+    if (selected === null) {
+        selected = 0;
+    }
+    selected = selected === null ? 0 : +selected;
+
+    global.getSelected = function () {
+        return selected;
+    };
+
+    global.setSelected = function (index) {
+        localStorage.setItem(storageKey.selected, index);
+    };
+
     global.baseActions = ['down', 'up', 'kick', 'walk'];
 
     global.herosConfig = [
@@ -111,7 +127,10 @@ define(function (require) {
                 up: {fps: 10},
                 kick: {fps: 24},
                 walk: {fps: 28}
-            }
+            },
+            unlocked: true,
+            unlockType: 'free',
+            cost: 0
         },
         {
             id: 1,
@@ -126,7 +145,10 @@ define(function (require) {
                 up: {fps: 10},
                 kick: {fps: 24},
                 walk: {fps: 28}
-            }
+            },
+            unlocked: false,
+            unlockType: 'share',
+            cost: 0
         },
         {
             id: 2,
@@ -141,7 +163,10 @@ define(function (require) {
                 up: {fps: 15},
                 kick: {fps: 15},
                 walk: {fps: 15}
-            }
+            },
+            unlocked: false,
+            unlockType: 'food',
+            cost: 50
         },
         {
             id: 3,
@@ -156,7 +181,10 @@ define(function (require) {
                 up: {fps: 10},
                 kick: {fps: 15},
                 walk: {fps: 15}
-            }
+            },
+            unlocked: false,
+            unlockType: 'food',
+            cost: 150
         },
         {
             id: 4,
@@ -171,7 +199,10 @@ define(function (require) {
                 up: {fps: 10},
                 kick: {fps: 15},
                 walk: {fps: 15}
-            }
+            },
+            unlocked: false,
+            unlockType: 'food',
+            cost: 250
         },
         {
             id: 5,
@@ -186,7 +217,10 @@ define(function (require) {
                 up: {fps: 10},
                 kick: {fps: 15},
                 walk: {fps: 20}
-            }
+            },
+            unlocked: false,
+            unlockType: 'food',
+            cost: 300
         },
         {
             id: 6,
@@ -201,7 +235,10 @@ define(function (require) {
                 up: {fps: 6},
                 kick: {fps: 15},
                 walk: {fps: 12}
-            }
+            },
+            unlocked: false,
+            unlockType: 'food',
+            cost: 400
         }
     ];
 

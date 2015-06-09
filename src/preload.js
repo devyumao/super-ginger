@@ -15,7 +15,7 @@ define(function (require) {
         // TODO: 组织 img 目录
         game.load.image('transparent', path + 'transparent.png');
 
-        ['black', 'white', 'beige', 'orange'].forEach(function (color) {
+        ['black', 'white', 'beige', 'orange', 'dark-beige'].forEach(function (color) {
             game.load.image('pixel-' + color, path + 'pixel/' + color +'.png');
         });
 
@@ -32,7 +32,14 @@ define(function (require) {
         game.load.image('icon-hero', path + 'icon-hero.png');
 
         game.load.image('scoreboard', path + 'scoreboard.png');
+
         game.load.image('popup-edge', path + 'popup-edge.png');
+        game.load.image('popup-header', path + 'popup-header.png');
+        game.load.image('popup-container', path + 'popup-container.png');
+        game.load.image('panel-edge', path + 'panel-edge.png');
+        game.load.image('btn-up', path + 'btn-up.png');
+        game.load.image('btn-down', path + 'btn-down.png');
+        game.load.image('btn-unlock', path + 'btn-unlock.png');
 
         game.load.image('end-board', path + 'end-board.png');
         game.load.image('end-btn', path + 'end-btn.png');
@@ -67,14 +74,6 @@ define(function (require) {
         game.load.spritesheet('stage-3', path + 'stage-3.png', 300, 247);
 
         game.load.image('thanks', path + 'thanks.png');
-
-        // for test
-        // game.load.spritesheet('cone', path + 'cone.png', 70, 181);
-        // game.load.spritesheet('baguette', path + 'baguette.png', 80, 157);
-        // game.load.spritesheet('donut', path + 'donut.png', 90, 90);
-        // game.load.spritesheet('zongzi', path + 'zongzi.png', 90, 82);
-        // game.load.spritesheet('cupcake', path + 'cupcake.png', 90, 135);
-        // game.load.spritesheet('macaron', path + 'macaron.png', 84, 101);
     }
 
     function create() {

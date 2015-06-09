@@ -67,7 +67,7 @@ define(function (require) {
 
         var game = this.game;
         this.stage = new Stage(game, {index: this.theme});
-        this.hero = new Hero(game, {index: 6});
+        this.hero = new Hero(game, {index: global.getSelected()});
     };
 
     Level.prototype._initMenuStatus = function () {
@@ -90,8 +90,8 @@ define(function (require) {
         title.alpha = 0.75;
         this.title = title;
 
-        // for test
-        // new End(game, {score: 20});
+        // var FamilyPopup = require('./FamilyPopup');
+        // new FamilyPopup(game);
     };
 
     Level.prototype._initPlayStatus = function () {
