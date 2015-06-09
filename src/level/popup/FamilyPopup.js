@@ -15,6 +15,8 @@ define(function (require) {
             this, game,
             {
                 hasHeader: true,
+                headerType: 'food',
+                title: '超能家族',
                 height: 550,
                 paddingBottom: 72
             }

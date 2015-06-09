@@ -23,13 +23,16 @@ define(function (require) {
         this.elements = [];
 
         this.hasHeader = !!options.hasHeader;
+        this.headerType = options.headerType ? options.headerType : '';
+        this.headerIcon = options.headerIcon ? options.headerIcon : '';
 
         this.width = game.cache.getImage('popup-edge').width;
         this.height = options.height ? options.height : 520;
         this.y = 120;
+        this.paddingHorz = 12;
         this.paddingBottom = options.paddingBottom ? options.paddingBottom : 30;
 
-        this.title = '超能家族';
+        this.title = options.title ? options.title : '';
 
         this._init();
     };
@@ -111,22 +114,33 @@ define(function (require) {
         titleText.anchor.set(0, 0.5);
         header.addChild(titleText);
 
-        var food = game.add.image(this.width - padding, 0, 'food');
-        food.width = 30;
-        food.height = food.width;
-        food.anchor.set(1, 0.5);
-        header.addChild(food);
+        switch (this.headerType) {
+            case 'icon':
+                var icon = game.add.image(this.width - padding, 0, this.headerIcon);
+                icon.width = 35;
+                icon.height = icon.width;
+                icon.anchor.set(1, 0.5);
+                header.addChild(icon);
+                break;
+            case 'food':
+                var food = game.add.image(this.width - padding, 0, 'food');
+                food.width = 30;
+                food.height = food.width;
+                food.anchor.set(1, 0.5);
+                header.addChild(food);
 
-        var foodCountText = game.add.text(
-            food.x - food.width - 10, 3,
-            global.getFoodCount() + '',
-            {
-                font: 'bold 24px ' + global.fontFamily,
-                fill: color.get('dark-grey')
-            }
-        );
-        foodCountText.anchor.set(1, 0.5);
-        header.addChild(foodCountText);
+                var foodCountText = game.add.text(
+                    food.x - food.width - 10, 3,
+                    global.getFoodCount() + '',
+                    {
+                        font: 'bold 24px ' + global.fontFamily,
+                        fill: color.get('dark-grey')
+                    }
+                );
+                foodCountText.anchor.set(1, 0.5);
+                header.addChild(foodCountText);
+                break;
+        }
     };
 
     Popup.prototype._initContainer = function () {

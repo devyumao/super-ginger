@@ -30,6 +30,7 @@ define(function (require) {
         game.load.image('menu-btn', path + 'menu-btn.png');
         game.load.image('icon-heart', path + 'icon-heart.png');
         game.load.image('icon-hero', path + 'icon-hero.png');
+        game.load.image('icon-podium', path + 'icon-podium.png');
 
         game.load.image('scoreboard', path + 'scoreboard.png');
 

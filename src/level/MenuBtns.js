@@ -24,7 +24,7 @@ define(function (require) {
                 position: 'right',
                 icon: 'food',
                 onClick: function () {
-                    var StorePopup = require('./StorePopup');
+                    var StorePopup = require('./popup/StorePopup');
                     new StorePopup(game);
                 }
             },
@@ -32,7 +32,7 @@ define(function (require) {
                 position: 'right',
                 icon: 'icon-hero',
                 onClick: function () {
-                    var FamilyPopup = require('./FamilyPopup');
+                    var FamilyPopup = require('./popup/FamilyPopup');
                     new FamilyPopup(game);
                 }
             },
@@ -40,8 +40,16 @@ define(function (require) {
                 position: 'left',
                 icon: 'icon-heart',
                 onClick: function () {
-                    var ThankPopup = require('./ThankPopup');
+                    var ThankPopup = require('./popup/ThankPopup');
                     new ThankPopup(game);
+                }
+            },
+            {
+                position: 'left',
+                icon: 'icon-podium',
+                onClick: function () {
+                    var RankPopup = require('./popup/RankPopup');
+                    new RankPopup(game);
                 }
             }
         ];
