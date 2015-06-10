@@ -28,7 +28,7 @@ define(function (require) {
     };
 
     End.prototype._initMask = function () {
-        var Mask = require('common/Mask');
+        var Mask = require('common/ui/Mask');
         this.mask = new Mask(this.game, {alpha: 0.6});
     };
 

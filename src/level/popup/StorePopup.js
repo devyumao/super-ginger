@@ -8,7 +8,7 @@ define(function (require) {
     var global = require('common/global');
     var color = require('common/color');
     var util = require('common/util');
-    var Popup = require('common/Popup');
+    var Popup = require('common/ui/Popup');
 
     var StorePopup = function (game, options) {
         Popup.call(
@@ -20,6 +20,8 @@ define(function (require) {
                 height: 382
             }
         );
+
+        this._init();
     };
     util.inherits(StorePopup, Popup);
 

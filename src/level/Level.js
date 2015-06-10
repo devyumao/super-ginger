@@ -89,9 +89,6 @@ define(function (require) {
         title.anchor.set(0.5, 0);
         title.alpha = 0.75;
         this.title = title;
-
-        var Popup = require('./popup/familyPopup');
-        new Popup(game);
     };
 
     Level.prototype._initPlayStatus = function () {

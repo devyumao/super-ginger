@@ -8,7 +8,7 @@ define(function (require) {
     var global = require('common/global');
     var color = require('common/color');
     var util = require('common/util');
-    var Popup = require('common/Popup');
+    var Popup = require('common/ui/Popup');
 
     var FamilyPopup = function (game) {
         Popup.call(
@@ -21,8 +21,18 @@ define(function (require) {
                 paddingBottom: 72
             }
         );
+
+        this._init();
     };
     util.inherits(FamilyPopup, Popup);
+
+    FamilyPopup.prototype._initContent = function () {
+        this._setPanelAttrs();
+        this._setPagerAttrs();
+
+        this._initPanels();
+        this._initPager();
+    };
 
     FamilyPopup.prototype._setPanelAttrs = function () {
         var game = this.game;
@@ -43,12 +53,16 @@ define(function (require) {
     };
 
     FamilyPopup.prototype._setPagerAttrs = function () {
-        this.page = global.getSelected() + 1;
         this.totalPage = global.herosConfig.length - 2;
         if (this.totalPage < 1) {
             this.totalPage = 1;
         }
 
+        this.page = global.getSelected() + 1;
+        if (this.page > this.totalPage) {
+            this.page = this.totalPage;
+        }
+        
         this.btnUp = null;
         this.btnDown = null;
 
@@ -56,162 +70,235 @@ define(function (require) {
         this.downActive = true;
     };
 
-    FamilyPopup.prototype._initContent = function () {
-        this._setPanelAttrs();
-        this._setPagerAttrs();
+    // TODO: 拆分
+    FamilyPopup.prototype._initPanels = function () {
+        var container = this.container;
+        var me = this;
+        var panel = this.panel;
 
-        this._initPanels();
-        this._initPager();
+        // 被选英雄置顶
+        container.y -= (panel.height + panel.marginTop) * (this.page - 1);
+
+        global.herosConfig.forEach(function (config, index) {
+            var options = me._initPanel(config, index);
+            me._initHero(config, index, options);
+            me._initInfo(config, index, options);
+            me._initBtnSelect(config, index, options);
+            me._initBtnUnlock(config, index, options);
+        });
     };
 
-    FamilyPopup.prototype._initPanels = function () {
+    FamilyPopup.prototype._initPanel = function (config, index) {
         var game = this.game;
         var container = this.container;
         var panel = this.panel;
+
+        // 绘制面板
+        var topEdge = game.add.image(
+            0, (panel.marginTop + panel.height) * index + panel.marginTop,
+            'panel-edge'
+        );
+        container.addChild(topEdge);
+
+        var main = game.add.image(
+            0, topEdge.y + panel.edgeHeight,
+            'pixel-dark-beige'
+        );
+        main.scale.set(panel.width, panel.mainHeight);
+        container.addChild(main);
+
+        var bottomEdge = game.add.image(
+            0, main.y + panel.mainHeight + panel.edgeHeight,
+            'panel-edge'
+        );
+        bottomEdge.scale.y = -1;
+        container.addChild(bottomEdge);
+
+        var dividing = game.add.image(
+            panel.dividingX, topEdge.y,
+            'pixel-beige'
+        );
+        dividing.scale.set(panel.dividingWidth, panel.height);
+        container.addChild(dividing);
+
+        // 设置面板容器
+        var panelCtn = game.add.image(0, topEdge.y);
+        container.addChild(panelCtn);
+
+        return {
+            y: topEdge.y,
+            panelCtn: panelCtn
+        };
+    };
+
+    FamilyPopup.prototype._initHero = function (config, index, options) {
+        var game = this.game;
+        var panel = this.panel;
+
+        var hero = game.add.sprite(
+            47 + config.paddingRight, panel.mainHeight / 2 - 2,
+            config.name + '-down'
+        );
+        hero.scale.set(config.scale * 1.1);
+        hero.anchor.set(0.5);
+        hero.animations.add('down');
+        hero.animations.play('down', config.actions.down.fps, true);
+        options.panelCtn.addChild(hero);
+    };
+
+    FamilyPopup.prototype._initInfo = function (config, index, options) {
+        var game = this.game;
+        var panel = this.panel;
+        var panelCtn = options.panelCtn;
+
+        var nameText = game.add.text(
+            panel.dividingX / 2, panel.mainHeight - 18,
+            config.chName,
+            {
+                font: 'bold 20px ' + global.fontFamily,
+                fill: color.get('coffee'),
+                strokeThickness: 5,
+                stroke: color.get('white')
+            }
+        );
+        nameText.anchor.set(0.5, 0);
+        nameText.alpha = 0.7;
+        panelCtn.addChild(nameText);
+
+        var descTitleText = game.add.text(
+            panel.dividingX + panel.dividingWidth + 10, 10,
+            '简介',
+            {
+                font: 'bold 19px ' + global.fontFamily,
+                fill: color.get('coffee'),
+                strokeThickness: 4,
+                stroke: color.get('beige')
+            }
+        );
+        panelCtn.addChild(descTitleText);
+
+        var powerTilteText = game.add.text(
+            panel.dividingX + panel.dividingWidth + 10, descTitleText.y + descTitleText.height + 10,
+            '超能',
+            {
+                font: 'bold 19px ' + global.fontFamily,
+                fill: color.get('coffee'),
+                strokeThickness: 4,
+                stroke: color.get('beige')
+            }
+        );
+        panelCtn.addChild(powerTilteText);
+    };
+
+    FamilyPopup.prototype._select = function (index) {
+        var hero = this.game.state.states.level.hero;
+        hero.change(index);
+        global.setSelected(index);
+    };
+
+    FamilyPopup.prototype._initBtnSelect = function (config, index, options) {
+        var game = this.game;
+        var panel = this.panel;
+
+        var btnSelect = game.add.button(
+            0, options.y,
+            'transparent',
+            function () {
+                this._select(index);
+                this._hide();
+            },
+            this
+        );
+        btnSelect.scale.set(panel.width, panel.height);
+        if (!global.getUnlock(index)) {
+            btnSelect.visible = false;
+        }
+        this.container.addChild(btnSelect);
+    };
+
+    FamilyPopup.prototype._initBtnUnlock = function (config, index, options) {
+        var game = this.game;
+        var panel = this.panel;
         var me = this;
 
-        global.herosConfig.forEach(function (config, index) {
-            // 绘制面板
-            var topEdge = game.add.image(
-                0, (panel.marginTop + panel.height) * index + panel.marginTop,
-                'panel-edge'
-            );
-            container.addChild(topEdge);
+        if (!global.getUnlock(index)) {
+            var btnUnlock = game.add.button(
+                panel.dividingX + panel.dividingWidth, options.y,
+                'btn-unlock',
+                function () {
+                    if (config.unlockType !== 'food') {
+                        return;
+                    }
 
-            var main = game.add.image(
-                0, topEdge.y + panel.edgeHeight,
-                'pixel-dark-beige'
-            );
-            main.scale.set(panel.width, panel.mainHeight);
-            container.addChild(main);
-
-            var bottomEdge = game.add.image(
-                0, main.y + panel.mainHeight + panel.edgeHeight,
-                'panel-edge'
-            );
-            bottomEdge.scale.y = -1;
-            container.addChild(bottomEdge);
-
-            var dividing = game.add.image(
-                panel.dividingX, topEdge.y,
-                'pixel-beige'
-            );
-            dividing.scale.set(panel.dividingWidth, panel.height);
-            container.addChild(dividing);
-
-            // 设置面板容器
-            var panelCtn = game.add.image(0, topEdge.y);
-            container.addChild(panelCtn);
-
-            // 绘制英雄
-            var hero = game.add.sprite(
-                47 + config.paddingRight, panel.height / 2 - 10,
-                config.name + '-down'
-            );
-            hero.scale.set(config.scale * 1.1);
-            hero.anchor.set(0.5);
-            hero.animations.add('down');
-            hero.animations.play('down', config.actions.down.fps, true);
-            panelCtn.addChild(hero);
-
-            // 绘制名字
-            var nameText = game.add.text(
-                panel.dividingX / 2, panel.height - 40,
-                config.chName,
-                {
-                    font: 'bold 20px ' + global.fontFamily,
-                    fill: color.get('coffee'),
-                    strokeThickness: 5,
-                    stroke: color.get('white')
-                }
-            );
-            nameText.anchor.set(0.5, 0);
-            nameText.alpha = 0.7;
-            panelCtn.addChild(nameText);
-
-            var descTitleText = game.add.text(
-                panel.dividingX + panel.dividingWidth + 10, 10,
-                '简介',
-                {
-                    font: 'bold 19px ' + global.fontFamily,
-                    fill: color.get('coffee'),
-                    strokeThickness: 4,
-                    stroke: color.get('beige')
-                }
-            );
-            panelCtn.addChild(descTitleText);
-
-            var powerTilteText = game.add.text(
-                panel.dividingX + panel.dividingWidth + 10, descTitleText.y + descTitleText.height + 10,
-                '超能',
-                {
-                    font: 'bold 19px ' + global.fontFamily,
-                    fill: color.get('coffee'),
-                    strokeThickness: 4,
-                    stroke: color.get('beige')
-                }
-            );
-            panelCtn.addChild(powerTilteText);
-
-
-            // 绘制按钮
-            if (!config.unlocked) {
-                var btnUnlock = game.add.button(
-                    panel.dividingX + panel.dividingWidth, topEdge.y,
-                    'btn-unlock',
-                    function () {
-                        console.log('unlock');
-                    },
-                    me
-                );
-                btnUnlock.alpha = 0.6;
-                if (index < me.page - 1 || index > me.page + 1) {
-                    // 防止框外触发
-                    btnUnlock.visible = false;
-                }
-                container.addChild(btnUnlock);
-                me.btnUnlockList.push(btnUnlock);
-
-                switch (config.unlockType) {
-                    case 'food':
-                        var costText = game.add.text(
-                            btnUnlock.width / 2 - 8, btnUnlock.height / 2,
-                            config.cost,
+                    this._hide(false);
+                    if (global.getFoodCount() >= config.cost) {
+                        var Confirm = require('common/ui/Confirm');
+                        new Confirm(
+                            game,
                             {
-                                font: 'bold 36px ' + global.fontFamily,
-                                fill: color.get('white')
+                                text: '确定用 ' + config.cost +' 果子解锁\n【' + config.chName + '】？',
+                                onConfirm: function () {
+                                    global.setFoodCount(global.getFoodCount() - config.cost);
+                                    global.unlock(index);
+                                    me._select(index);
+                                }
                             }
                         );
-                        costText.anchor.set(1, 0.5);
-                        btnUnlock.addChild(costText);
+                    }
+                    else {
+                        var StorePopup = require('./StorePopup');
+                        new StorePopup(game);
+                    }
+                },
+                this
+            );
+            btnUnlock.alpha = 0.6;
+            if (index < this.page - 1 || index > this.page + 1) {
+                // 防止框外触发
+                btnUnlock.visible = false;
+            }
+            this.container.addChild(btnUnlock);
+            this.btnUnlockList.push(btnUnlock);
 
-                        var food = game.add.image(
-                            btnUnlock.width / 2 + 8, btnUnlock.height / 2 - 5,
-                            'food'
-                        );
-                        food.anchor.set(0, 0.5);
-                        food.width = 36;
-                        food.height = food.width;
-                        btnUnlock.addChild(food);
-                        break;
-                    case 'share':
-                        var shareText = game.add.text(
-                            btnUnlock.width / 2, btnUnlock.height / 2,
-                            '分享即可获得',
-                            {
-                                font: 'bold 32px ' + global.fontFamily,
-                                fill: color.get('white')
-                            }
-                        );
-                        shareText.anchor.set(0.5);
-                        btnUnlock.addChild(shareText);
-                        break;
-                }
+            switch (config.unlockType) {
+                case 'food':
+                    var costText = game.add.text(
+                        btnUnlock.width / 2 - 8, btnUnlock.height / 2,
+                        config.cost,
+                        {
+                            font: 'bold 36px ' + global.fontFamily,
+                            fill: color.get('white')
+                        }
+                    );
+                    costText.anchor.set(1, 0.5);
+                    btnUnlock.addChild(costText);
+
+                    var food = game.add.image(
+                        btnUnlock.width / 2 + 8, btnUnlock.height / 2 - 5,
+                        'food'
+                    );
+                    food.anchor.set(0, 0.5);
+                    food.width = 36;
+                    food.height = food.width;
+                    btnUnlock.addChild(food);
+                    break;
+                case 'share':
+                    var shareText = game.add.text(
+                        btnUnlock.width / 2, btnUnlock.height / 2,
+                        '分享即可获得',
+                        {
+                            font: 'bold 32px ' + global.fontFamily,
+                            fill: color.get('white')
+                        }
+                    );
+                    shareText.anchor.set(0.5);
+                    btnUnlock.addChild(shareText);
+                    break;
             }
-            else {
-                me.btnUnlockList.push(null);
-            }
-        });
+        }
+        else {
+            this.btnUnlockList.push(null);
+        }
     };
 
     FamilyPopup.prototype._initPager = function () {

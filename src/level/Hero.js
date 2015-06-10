@@ -13,17 +13,24 @@ define(function (require) {
         this.sprite = null;
         this.upsideDown = false;
 
+        this._init();
+    };
+
+    Hero.prototype._init = function () {
+        this._initConfig();
+        this._initSprite();
+    };
+
+    Hero.prototype._initConfig = function () {
         var heroConfig = require('common/global').herosConfig[this.index];
         for (var key in heroConfig) {
             if (heroConfig.hasOwnProperty(key)) {
                 this[key] = heroConfig[key];
             }
         }
-
-        this._init();
     };
 
-    Hero.prototype._init = function () {
+    Hero.prototype._initSprite = function () {
         var game = this.game;
 
         var sprite = game.add.sprite(
@@ -35,7 +42,6 @@ define(function (require) {
         this.sprite = sprite;
 
         this.down();
-        // this.up();
     };
 
     Hero.prototype.setForPlay = function (useAnim, cb) {
@@ -153,9 +159,18 @@ define(function (require) {
         return this.sprite.width;
     };
 
-    // Hero.prototype.getPaddingRight = function () {
-    //     return this.paddingRight;
-    // };
+    Hero.prototype.change = function (index) {
+        this.index = index;
+        this._initConfig();
+
+        var game = this.game;
+        var sprite = this.sprite;
+        sprite.x = (game.width + this.width * this.scale) / 2;
+        sprite.y = game.height - config.initialHorizon;
+        sprite.scale.set(this.scale);
+
+        this.down();
+    };
 
     return Hero;
 

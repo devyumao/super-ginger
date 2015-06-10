@@ -8,7 +8,7 @@ define(function (require) {
     var global = require('common/global');
     var color = require('common/color');
     var util = require('common/util');
-    var Popup = require('common/Popup');
+    var Popup = require('common/ui/Popup');
 
     var RankPopup = function (game, options) {
         Popup.call(
@@ -21,6 +21,8 @@ define(function (require) {
                 height: 427
             }
         );
+
+        this._init();
     };
     util.inherits(RankPopup, Popup);
 
@@ -71,7 +73,7 @@ define(function (require) {
                 index + 1 + '',
                 {
                     font: 'bold 30px ' + global.fontFamily,
-                    fill: color.get('black'),
+                    fill: color.get('coffee'),
                     strokeThickness: 6,
                     stroke: color.get('white')
                 }

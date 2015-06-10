@@ -28,13 +28,17 @@ define(function (require) {
 
         this.width = game.cache.getImage('popup-edge').width;
         this.height = options.height ? options.height : 520;
-        this.y = 120;
+        this.y = options.y ? options.y : 120;
         this.paddingHorz = 12;
+        this.paddingTop = 30;
         this.paddingBottom = options.paddingBottom ? options.paddingBottom : 30;
+
+        this.containerWidth = this.width - 2 * this.paddingHorz;
+        this.containerHeight = 0;
 
         this.title = options.title ? options.title : '';
 
-        this._init();
+        // this._init();
     };
 
     Popup.prototype._init = function () {
@@ -50,7 +54,7 @@ define(function (require) {
 
     Popup.prototype._initMask = function () {
         var me = this;
-        var Mask = require('common/Mask');
+        var Mask = require('common/ui/Mask');
 
         this.mask = new Mask(
             this.game,
@@ -147,10 +151,15 @@ define(function (require) {
         var game = this.game;
         var margin = 12;
 
+        if (this.hasHeader) {
+            this.paddingTop = this.header.height;
+        }
+
         var container = game.add.image(
             (game.width - this.width) / 2 + margin,
-            game.height + this.header.height
+            game.height + this.paddingTop
         );
+        this.containerHeight = this.height - this.paddingTop - this.paddingBottom;
         this.container = container;
         this.elements.push(container);
 
@@ -158,8 +167,8 @@ define(function (require) {
         var crop = this.game.add.graphics(0, 0);
         crop.beginFill(0xffffff);
         crop.drawRect(
-            container.x, game.height + this.header.height,
-            this.width - margin * 2, this.height - this.header.height - this.paddingBottom
+            container.x, game.height + this.paddingTop,
+            this.width - margin * 2, this.height - this.paddingTop - this.paddingBottom
         );
         crop.endFill();
         container.mask = crop;
@@ -205,19 +214,31 @@ define(function (require) {
         });
     };
 
-    Popup.prototype._hide = function () {
+    Popup.prototype._hide = function (tweenEnabled) {
         this.mask.hide(500);
 
         var game = this.game;
         var y = this.y;
-        this.elements.forEach(function (el) {
-            var move = game.add.tween(el)
-                .to({y: game.height - y + ''}, 600, Phaser.Easing.Back.In);
-            move.onComplete.add(function () {
+
+        if (typeof tweenEnabled === 'undefined') {
+            tweenEnabled = true;
+        }
+
+        if (tweenEnabled) {
+            this.elements.forEach(function (el) {
+                var move = game.add.tween(el)
+                    .to({y: game.height - y + ''}, 600, Phaser.Easing.Back.In);
+                move.onComplete.add(function () {
+                    el.destroy();
+                });
+                move.start();
+            });
+        }
+        else {
+            this.elements.forEach(function (el) {
                 el.destroy();
             });
-            move.start();
-        });
+        }
     };
 
     return Popup;

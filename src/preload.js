@@ -41,6 +41,7 @@ define(function (require) {
         game.load.image('btn-up', path + 'btn-up.png');
         game.load.image('btn-down', path + 'btn-down.png');
         game.load.image('btn-unlock', path + 'btn-unlock.png');
+        game.load.image('btn-confirm', path + 'btn-confirm.png');
 
         game.load.image('end-board', path + 'end-board.png');
         game.load.image('end-btn', path + 'end-btn.png');
