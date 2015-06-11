@@ -216,15 +216,7 @@ define(function (require) {
                 this
             );
             btnSelect.scale.set(panel.width, panel.height);
-
-            var events = btnSelect.events;
-            var panelCtn = options.panelCtn;
-            events.onInputDown.add(function () {
-                panelCtn.alpha = 0.7;
-            });
-            events.onInputUp.add(function () {
-                panelCtn.alpha = 1;
-            });
+            util.addHover(btnSelect, options.panelCtn);
 
             if (!this._isInCurrentPage(index) || !global.getUnlock(index)) {
                 btnSelect.visible = false;
@@ -274,14 +266,7 @@ define(function (require) {
                 this
             );
             btnUnlock.alpha = 0.6;
-
-            var events = btnUnlock.events;
-            events.onInputDown.add(function () {
-                btnUnlock.alpha = 0.5;
-            });
-            events.onInputUp.add(function () {
-                btnUnlock.alpha = 0.6;
-            });
+            util.addHover(btnUnlock);
 
             if (!this._isInCurrentPage(index)) {
                 // 防止框外触发

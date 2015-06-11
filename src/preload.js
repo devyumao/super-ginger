@@ -87,7 +87,7 @@ define(function (require) {
         // FIX: 并发请求
         global.initHighest(function () {
             // 与以往不同，menu -> level 是连贯场景，所以实际是同一 state
-            me.state.start('level', true, false, 'menu');
+            me.state.start('level', true, false, 'play');
         });
     }
 

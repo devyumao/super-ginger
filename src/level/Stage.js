@@ -167,6 +167,10 @@ define(function (require) {
             cb && cb();
         }, this);
         move.start();
+
+        return {
+            hasFood: hasFood
+        };
     };
 
     Stage.prototype.getCurrEdgeX = function () {

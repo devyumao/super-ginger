@@ -23,6 +23,7 @@ define(function (require) {
 
     var Scoreboard = require('./Scoreboard');
     var Foodboard = require('./Foodboard');
+    var Tip = require('./Tip');
 
     var Level = function () {
     };
@@ -123,7 +124,6 @@ define(function (require) {
             });
         }
 
-        
         this.scoreboard = new Scoreboard(game);
         this.foodboard = new Foodboard(game);
 
@@ -135,6 +135,14 @@ define(function (require) {
                 objects: [this.stage, this.hero, this.stick]
             }
         );
+
+        // this._showReward();
+
+        // 最高分不足2，则给玩法提示
+        // 不设1，因为首次成功有偶然性，不一定是真会玩
+        if (global.getHighest() < 2) {
+            this.playTip = new Tip(game, {text: '按住屏幕\n使棒棒变长'});
+        }
 
         this._bindTouch();
     };
@@ -167,6 +175,8 @@ define(function (require) {
     };
 
     Level.prototype._showReward = function () {
+        var color = require('common/color');
+
         // TODO: 对象化
         var game = this.game;
 
@@ -175,17 +185,17 @@ define(function (require) {
             this.stage.getSpotX(), game.height - config.horizon,
             '+1',
             {
-                fill: '#333'
+                font: 'bold 20px ' + global.fontFamily,
+                fill: color.get('dark-grey')
             }
         );
         pointsText.anchor.set(0.5, 1);
-        pointsText.fontSize = 20;
         pointsText.alpha = 0;
 
         var duration = 700;
 
         var showPoints = game.add.tween(pointsText)
-            .to({alpha: 0.5}, duration * 0.5, Phaser.Easing.Quadratic.Out, false);
+            .to({alpha: 0.8}, duration * 0.5, Phaser.Easing.Quadratic.Out, false);
         var hidePoints = game.add.tween(pointsText)
             .to({alpha: 0}, duration * 0.5, Phaser.Easing.Quadratic.In, false);
         var risePoints = game.add.tween(pointsText)
@@ -199,17 +209,17 @@ define(function (require) {
 
         // 赞美之词
         var praiseText = game.add.text(
-            game.width / 2, 160,
+            game.width / 2, 230,
             '赞 哟 !',
             {
-                fill: '#333'
+                font: 'bold 36px ' + global.fontFamily,
+                fill: color.get('dark-grey')
             }
         );
         praiseText.anchor.set(0.5, 0);
-        praiseText.fontSize = 36;
         praiseText.alpha = 0;
         var showPraise = game.add.tween(praiseText)
-            .to({alpha: 0.5}, 400, Phaser.Easing.Quadratic.Out, false);
+            .to({alpha: 0.8}, 400, Phaser.Easing.Quadratic.Out, false);
         var hidePraise = game.add.tween(praiseText)
             .to({alpha: 0}, 400, Phaser.Easing.Quadratic.In, false, 300);
         hidePraise.onComplete.add(function () {
@@ -261,7 +271,6 @@ define(function (require) {
 
             if (stick.getLength() > stage.getInterval()) { // 长度足够
                 if (stick.isInSpot(stage)) { // 命中红区
-                    console.log('NB!');
                     scoreboard.addScore(1);
                     me._showReward();
                 }
@@ -274,6 +283,14 @@ define(function (require) {
                         if (!hero.isUpsideDown()) {
                             // 没倒置，继续走
                             if (stick.isInStage(stage)) { // 成功啦
+                                // 隐去提示
+                                [me.playTip, me.foodTip].forEach(function (tip) {
+                                    if (tip) {
+                                        tip.hide();
+                                        tip = null;
+                                    }
+                                });
+
                                 hero.walk(
                                     nextEdgeX,
                                     function () {
@@ -290,11 +307,19 @@ define(function (require) {
                                             me.shouldMgScroll = false;
                                         });
 
-                                        stage.addNext(function () {
+                                        var options = stage.addNext(function () {
                                             stick.update();
                                             foreground.update();
                                             me.isHoldEnabled = true;
                                         });
+                                        if (!global.getFoodCount() && options.hasFood) {
+                                            me.foodTip = new Tip(
+                                                me.game,
+                                                {
+                                                    text: '行走时点击屏幕\n可翻转角色吃果果'
+                                                }
+                                            );
+                                        }
                                     }
                                 );
                             }

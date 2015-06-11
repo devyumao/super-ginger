@@ -40,6 +40,19 @@ define(function (require) {
         return type;
     };
 
+    util.addHover = function (btn, target) {
+        var events = btn.events;
+        target = target ? target : btn;
+        var originAlpha = target.alpha;
+
+        events.onInputDown.add(function () {
+            target.alpha = originAlpha * 0.8;
+        });
+        events.onInputUp.add(function () {
+            target.alpha = originAlpha;
+        });
+    };
+
     return util;
 
 });

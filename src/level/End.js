@@ -7,6 +7,7 @@ define(function (require) {
 
     var global = require('common/global');
     var color = require('common/color');
+    var util = require('common/util');
 
     var End = function (game, options) {
         this.game = game;
@@ -168,6 +169,7 @@ define(function (require) {
         btnConfigs.forEach(function (config, index) {
             var btn = game.add.button(0, 360 + index * 80, config.texture, config.onClick);
             btn.anchor.set(0.5);
+            util.addHover(btn);
             body.addChild(btn);
 
             var text = game.add.text(

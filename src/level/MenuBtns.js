@@ -7,6 +7,7 @@ define(function (require) {
 
     var global = require('common/global');
     var color = require('common/color');
+    var util = require('common/util');
 
     var MenuBtns = function (game) {
         this.game = game;
@@ -80,6 +81,7 @@ define(function (require) {
                 config.onClick
             );
             btn.anchor.set(0.5);
+            util.addHover(btn);
             group.add(btn);
 
             var icon = game.add.image(0, 0, config.icon);

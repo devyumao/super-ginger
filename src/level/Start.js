@@ -7,6 +7,7 @@ define(function (require) {
 
     var global = require('common/global');
     var color = require('common/color');
+    var util = require('common/util');
 
     var Start = function (game, options) {
         this.game = game;
@@ -25,6 +26,7 @@ define(function (require) {
             options.context
         );
         button.anchor.set(0.5);
+        util.addHover(button);
 
         var text = game.add.text(
             0, 0,

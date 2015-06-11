@@ -65,6 +65,7 @@ define(function (require) {
                     );
                 }
             );
+            util.addHover(btn);
             container.addChild(btn);
 
             var topEdge = game.add.image(0, 0, 'panel-edge');
