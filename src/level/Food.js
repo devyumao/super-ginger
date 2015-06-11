@@ -76,7 +76,7 @@ define(function (require) {
 
         // 消失动画
         var vanish = this.game.add.tween(image.scale)
-            .to({x: 0, y: 0}, 150, Phaser.Easing.Quadratic.In);
+            .to({x: 0, y: 0}, 100, Phaser.Easing.Quadratic.In);
         vanish.onComplete.add(
             function () {
                 this.destroy();

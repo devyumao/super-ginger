@@ -49,6 +49,7 @@ define(function (require) {
         var panel = this.panel;
         this.panel.height = panel.mainHeight + panel.edgeHeight * 2;
 
+        this.btnSelectList = [];
         this.btnUnlockList = [];
     };
 
@@ -146,6 +147,10 @@ define(function (require) {
         options.panelCtn.addChild(hero);
     };
 
+    FamilyPopup.prototype._isInCurrentPage = function (index) {
+        return index >= this.page - 1 && index <= this.page + 1;
+    };
+
     FamilyPopup.prototype._initInfo = function (config, index, options) {
         var game = this.game;
         var panel = this.panel;
@@ -197,31 +202,47 @@ define(function (require) {
     };
 
     FamilyPopup.prototype._initBtnSelect = function (config, index, options) {
-        var game = this.game;
-        var panel = this.panel;
+        if (global.getUnlock(index)) {
+            var game = this.game;
+            var panel = this.panel;
 
-        var btnSelect = game.add.button(
-            0, options.y,
-            'transparent',
-            function () {
-                this._select(index);
-                this._hide();
-            },
-            this
-        );
-        btnSelect.scale.set(panel.width, panel.height);
-        if (!global.getUnlock(index)) {
-            btnSelect.visible = false;
+            var btnSelect = game.add.button(
+                0, options.y,
+                'transparent',
+                function () {
+                    this._select(index);
+                    this._hide();
+                },
+                this
+            );
+            btnSelect.scale.set(panel.width, panel.height);
+
+            var events = btnSelect.events;
+            var panelCtn = options.panelCtn;
+            events.onInputDown.add(function () {
+                panelCtn.alpha = 0.7;
+            });
+            events.onInputUp.add(function () {
+                panelCtn.alpha = 1;
+            });
+
+            if (!this._isInCurrentPage(index) || !global.getUnlock(index)) {
+                btnSelect.visible = false;
+            }
+            this.container.addChild(btnSelect);
+            this.btnSelectList.push(btnSelect);
         }
-        this.container.addChild(btnSelect);
+        else {
+            this.btnSelectList.push(null);
+        }
     };
 
     FamilyPopup.prototype._initBtnUnlock = function (config, index, options) {
-        var game = this.game;
-        var panel = this.panel;
-        var me = this;
-
         if (!global.getUnlock(index)) {
+            var game = this.game;
+            var panel = this.panel;
+            var me = this;
+
             var btnUnlock = game.add.button(
                 panel.dividingX + panel.dividingWidth, options.y,
                 'btn-unlock',
@@ -253,7 +274,16 @@ define(function (require) {
                 this
             );
             btnUnlock.alpha = 0.6;
-            if (index < this.page - 1 || index > this.page + 1) {
+
+            var events = btnUnlock.events;
+            events.onInputDown.add(function () {
+                btnUnlock.alpha = 0.5;
+            });
+            events.onInputUp.add(function () {
+                btnUnlock.alpha = 0.6;
+            });
+
+            if (!this._isInCurrentPage(index)) {
                 // 防止框外触发
                 btnUnlock.visible = false;
             }
@@ -349,20 +379,30 @@ define(function (require) {
                 this.upActive = false;
                 this.downActive = false;
 
+                var index = this.page + 2 * factor;
                 // 要来的先搞，保证来后状态示人
-                var comingBtnUnlock = this.btnUnlockList[this.page + 2 * factor];
+                var comingBtnUnlock = this.btnUnlockList[index];
                 if (comingBtnUnlock) {
                     comingBtnUnlock.visible = true;
+                }
+                var comingBtnSelect = this.btnSelectList[index];
+                if (comingBtnSelect) {
+                    comingBtnSelect.visible = true;
                 }
             },
             this
         );
         turn.onComplete.add(
             function () {
+                var index = this.page - factor;
                 // 当前的后搞，保证走前状态示人
-                var currBtnUnlock = this.btnUnlockList[this.page - factor];
+                var currBtnUnlock = this.btnUnlockList[index];
                 if (currBtnUnlock) {
                     currBtnUnlock.visible = false;
+                }
+                var currBtnSelect = this.btnSelectList[index];
+                if (currBtnSelect) {
+                    currBtnSelect.visible = false;
                 }
 
                 this.page += factor;
