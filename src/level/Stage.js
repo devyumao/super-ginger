@@ -5,6 +5,7 @@
 
 define(function (require) {
 
+    var global = require('common/global');
     var util = require('common/util');
     var config = require('./config');
     var Food = require('./Food');
@@ -31,7 +32,10 @@ define(function (require) {
         this.maxWidth = 110;
         this.spotWidth = 10; // TODO: 英雄技能影响
 
-        this.foodProba = 0.5;
+        var heroPower = global.getHeroConfig().power;
+
+        this.defaultFoodProba = 0.5;
+        this.foodProba = heroPower.foodProba ? heroPower.foodProba : this.defaultFoodProba;
 
         this._init();
     };
@@ -113,7 +117,7 @@ define(function (require) {
         return food;
     };
 
-    Stage.prototype.addNext = function (cb) {
+    Stage.prototype.addNext = function (cb, foodProba) {
         var game = this.game;
 
         var nextWidth = game.rnd.between(this.minWidth, this.maxWidth);
@@ -126,7 +130,7 @@ define(function (require) {
         var foodMargin = 10;
         var food = null;
         var foodX = nextX;
-        var hasFood = util.proba(0.52) // 先验概率
+        var hasFood = util.proba(this.foodProba) // 先验概率
             && nextX - this.currEdgeX >= foodWidth + foodMargin * 2; // 间距是否足够放
         if (hasFood) {
             foodX = game.rnd.between(this.currEdgeX + foodMargin, nextX - foodMargin - foodWidth);
@@ -204,6 +208,11 @@ define(function (require) {
 
     Stage.prototype.getFood = function () {
         return this.food;
+    };
+
+    Stage.prototype.updateFoodProba = function () {
+        var foodProba = global.getHeroConfig().power.foodProba;
+        this.foodProba = foodProba ? foodProba : this.defaultFoodProba;
     };
 
     return Stage;

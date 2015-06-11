@@ -43,8 +43,19 @@ define(function (require) {
 
     Scoreboard.prototype.addScore = function (value) {
         this.score += value;
-        this.text.text = this.score + '';
-        // TODO: 动画
+        var text = this.text;
+        text.text = this.score + '';
+        
+        var game = this.game;
+        var duration = 200;
+        var easingQuadratic = Phaser.Easing.Quadratic;
+
+        var largen = game.add.tween(text.scale)
+            .to({x: 1.2, y: 1.2}, duration, easingQuadratic.Out);
+        var recover = game.add.tween(text.scale)
+            .to({x: 1, y: 1}, duration, easingQuadratic.In);
+        largen.chain(recover);
+        largen.start();
     };
 
     return Scoreboard;

@@ -27,7 +27,8 @@ define(function (require) {
                 fill: color.get('white')
             }
         );
-        text.anchor.set(1, 0);
+        text.anchor.set(1, 0.5);
+        text.y += text.height / 2;
         this.text = text;
 
         var legend = game.add.image(game.width - 20, 18, 'food');
@@ -38,7 +39,19 @@ define(function (require) {
     };
 
     Foodboard.prototype.update = function () {
-        this.text.text = global.getFoodCount() + '';
+        var text = this.text;
+        text.text = global.getFoodCount() + '';
+
+        var game = this.game;
+        var duration = 200;
+        var easingQuadratic = Phaser.Easing.Quadratic;
+
+        var largen = game.add.tween(text.scale)
+            .to({x: 1.2, y: 1.2}, duration, easingQuadratic.Out);
+        var recover = game.add.tween(text.scale)
+            .to({x: 1, y: 1}, duration, easingQuadratic.In);
+        largen.chain(recover);
+        largen.start();
     };
 
     return Foodboard;

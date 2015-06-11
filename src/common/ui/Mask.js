@@ -28,23 +28,35 @@ define(function (require) {
     };
 
     Mask.prototype.show = function (duration, cb) {
-        var show = this.game.add.tween(this.image)
-            .from({alpha: 0}, duration, this.ease);
-        cb && show.onComplete.add(cb);
-        show.start();
+        if (duration) {
+            var show = this.game.add.tween(this.image)
+                .from({alpha: 0}, duration, this.ease);
+            cb && show.onComplete.add(cb);
+            show.start();
+        }
+        else {
+            cb && cb();
+        }
     };
 
     Mask.prototype.hide = function (duration, cb) {
-        var hide = this.game.add.tween(this.image)
-            .to({alpha: 0}, duration, this.ease);
-        hide.onComplete.add(
-            function () {
-                this._destroy();
-                cb && cb();
-            },
-            this
-        );
-        hide.start();
+        if (duration) {
+            var hide = this.game.add.tween(this.image)
+                .to({alpha: 0}, duration, this.ease);
+            hide.onComplete.add(
+                function () {
+                    this._destroy();
+                    cb && cb();
+                },
+                this
+            );
+            hide.start();
+        }
+        else {
+            this.image.alpha = 0;
+            this._destroy();
+            cb && cb();
+        }
     };
 
     Mask.prototype._bindTouch = function (onTouch) {

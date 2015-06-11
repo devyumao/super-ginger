@@ -11,6 +11,7 @@ define(function (require) {
         this.game = game;
         this.image = null;
         this.isEaten = false;
+        this.shaking = null;
 
         this._init(options);
     };
@@ -25,8 +26,12 @@ define(function (require) {
     };
 
     Food.prototype._shake = function () {
-        this.game.add.tween(this.image)
+        this.shaking = this.game.add.tween(this.image)
             .to({y: '8'}, 1500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    };
+
+    Food.prototype._stopShaking = function () {
+        this.shaking.stop();
     };
 
     Food.prototype.destroy = function () {
@@ -59,9 +64,26 @@ define(function (require) {
     };
 
     Food.prototype.beEaten = function () {
-        // TODO: 动画
-        this.destroy();
         this.isEaten = true;
+
+        this._stopShaking();
+
+        var image = this.image;
+        // 调整中心及位置以适应动画
+        image.anchor.set(0.5);
+        image.x += image.width / 2;
+        image.y += image.height / 2;
+
+        // 消失动画
+        var vanish = this.game.add.tween(image.scale)
+            .to({x: 0, y: 0}, 150, Phaser.Easing.Quadratic.In);
+        vanish.onComplete.add(
+            function () {
+                this.destroy();
+            },
+            this
+        );
+        vanish.start();
     };
 
     return Food;

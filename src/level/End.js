@@ -62,52 +62,79 @@ define(function (require) {
         board.anchor.set(0.5, 0);
         body.addChild(board);
 
+        var titleFontStyle = {
+            font: '22px ' + global.fontFamily,
+            fill: color.get('black')
+        };
+
         var scoreTitle = game.add.text(
             0, 15,
             '分数',
-            {
-                font: '22px ' + global.fontFamily,
-                fill: color.get('black')
-            }
+            titleFontStyle
         );
         scoreTitle.anchor.set(0.5, 0);
         board.addChild(scoreTitle);
 
-        var score = game.add.text(
-            0, 45,
-            this.score + '',
-            {
-                font: 'bold 46px ' + global.fontFamily,
-                fill: color.get('black')
-            }
-        );
-        score.anchor.set(0.5, 0);
-        board.addChild(score);
-
         var highestTitle = game.add.text(
             0, 108,
             '最佳',
-            {
-                font: '22px ' + global.fontFamily,
-                fill: color.get('black')
-            }
+            titleFontStyle
         );
         highestTitle.anchor.set(0.5, 0);
         board.addChild(highestTitle);
 
-        var highest = game.add.text(
-            0, 138,
-            global.getHighest(),
-            {
-                font: 'bold 46px ' + global.fontFamily,
-                fill: color.get('black')
-            }
+        var valueFontStyle = {
+            font: 'bold 46px ' + global.fontFamily,
+            fill: color.get('black')
+        };
+
+        var scoreValue = game.add.text(
+            0, 45,
+            this.score + '',
+            valueFontStyle
         );
-        highest.anchor.set(0.5, 0);
-        board.addChild(highest);
+        scoreValue.anchor.set(0.5, 0);
+        board.addChild(scoreValue);
+
+        var hightest = global.getHighest();
+        var highestValue = game.add.text(
+            0, 138,
+            hightest + '',
+            valueFontStyle
+        );
+        highestValue.anchor.set(0.5, 0);
+        board.addChild(highestValue);
+
+        if (this.score > hightest) {
+            var newRecord = game.add.image(
+                scoreTitle.x + scoreTitle.width / 2 + 18,
+                scoreTitle.y,
+                'new-record'
+            );
+            board.addChild(newRecord);
+
+            var newRecordText = game.add.text(
+                newRecord.x + newRecord.width / 2,
+                newRecord.y + 16,
+                '新纪录',
+                {
+                    font: 'bold 18px ' + global.fontFamily,
+                    fill: color.get('white')
+                }
+            );
+            newRecordText.anchor.set(0.5);
+            board.addChild(newRecordText);
+        }
+    };
+
+    End.prototype._transition = function (cb) {
+        var Mask = require('common/ui/Mask');
+        var mask = new Mask(this.game, {alpha: 1});
+        mask.show(150, cb);
     };
 
     End.prototype._initBtns = function () {
+        var me = this;
         var game = this.game;
         var body = this.body;
         var btnConfigs = [
@@ -122,14 +149,18 @@ define(function (require) {
                 texture: 'end-btn',
                 text: '返回菜单',
                 onClick: function () {
-                    game.state.start('level', true, false, 'menu');
+                    me._transition(function () {
+                        game.state.start('level', true, false, 'menu');
+                    });
                 }
             },
             {
                 texture: 'end-btn',
                 text: '再玩一次',
                 onClick: function () {
-                    game.state.start('level', true, false, 'play');
+                    me._transition(function () {
+                        game.state.start('level', true, false, 'play');
+                    });
                 }
             }
         ];
@@ -143,8 +174,8 @@ define(function (require) {
                 0, 3,
                 config.text,
                 {
-                    font: '30px ' + global.fontFamily,
-                    fill: color.get('white')
+                    font: 'bold 30px ' + global.fontFamily,
+                    fill: color.get(config.texture === 'end-btn' ? 'coffee' : 'white')
                 }
             );
             text.anchor.set(0.5);

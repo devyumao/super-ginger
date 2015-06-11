@@ -41,6 +41,13 @@ define(function (require) {
         // this.theme = 3;
     };
 
+    // 转场
+    Level.prototype._transition = function () {
+        var Mask = require('common/ui/Mask');
+        var mask = new Mask(this.game, {alpha: 1});
+        mask.hide(150);
+    };
+
     Level.prototype._initView = function () {
         var game = this.game;
 
@@ -160,6 +167,7 @@ define(function (require) {
     };
 
     Level.prototype._showReward = function () {
+        // TODO: 对象化
         var game = this.game;
 
         // 加分文本
@@ -334,6 +342,11 @@ define(function (require) {
                 this._initPlayStatus();
                 break;
         }
+
+        // for test
+        // new End(this.game, {score: 29});
+
+        this._transition();
     };
 
     Level.prototype.update = function () {

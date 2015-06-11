@@ -46,6 +46,10 @@ define(function (require) {
         game.load.image('end-board', path + 'end-board.png');
         game.load.image('end-btn', path + 'end-btn.png');
         game.load.image('end-btn-share', path + 'end-btn-share.png');
+        game.load.image('new-record', path + 'new-record.png');
+
+        game.load.spritesheet('stick', path + 'stick.png', 5, 24);
+        game.load.spritesheet('stick-cold', path + 'stick-cold.png', 5, 24);
 
         global.herosConfig.forEach(function (hero) {
             var name = hero.name;
@@ -60,8 +64,6 @@ define(function (require) {
                 }
             }
         });
-
-        game.load.spritesheet('stick', path + 'stick.png', 5, 24);
 
         [1582, 1783, 1311].forEach(function (width, index) {
             var no = index + 1;

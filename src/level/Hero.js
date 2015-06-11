@@ -170,6 +170,17 @@ define(function (require) {
         sprite.scale.set(this.scale);
 
         this.down();
+
+        var level = game.state.states.level;
+        var stick = level.stick;
+        if (stick) {
+            // 棒棒速度
+            stick.updateSpeed();
+            // 棒棒材质
+            stick.updateTexture();
+        }
+        stage = level.stage;
+        stage.updateFoodProba();
     };
 
     return Hero;

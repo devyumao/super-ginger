@@ -1,16 +1,25 @@
 /**
- * @file 棍子
+ * @file 棒棒
  * @author yumao [zhangyu38@baidu.com]
  */
 
 define(function (require) {
 
+    var global = require('common/global');
     var config = require('./config');
 
     var Stick = function (game) {
         this.game = game;
         this.image = null;
         this.trash = null;
+
+        var heroPower = global.getHeroConfig().power;
+
+        this.defaultSpeed = 8;
+        this.speed = heroPower.stickSpeed ? heroPower.stickSpeed : this.defaultSpeed;
+
+        this.defaultTexture = 'stick';
+        this.texture = heroPower.stickTexture ? heroPower.stickTexture : this.defaultTexture;
 
         this._init();
     };
@@ -27,25 +36,16 @@ define(function (require) {
             this.trash = this.image;
         }
 
-        var image = game.add.tileSprite(110, game.height - config.horizon, 5, 0.001, 'stick');
+        var image = game.add.tileSprite(110, game.height - config.horizon, 5, 0.001, this.texture);
         image.anchor.set(0.5, 1);
         this.image = image;
     };
 
     Stick.prototype.lengthen = function () {
         if (this.image.height < this.game.height - config.horizon) {
-            this.image.height += 8;
+            this.image.height += this.speed;
         }
     };
-
-    // Stick.prototype._rotate = function (angle, delay, cb) {
-    //     var game = this.game;
-
-    //     var rotate = game.add.tween(this.image)
-    //         .to({angle: angle}, 400, Phaser.Easing.Quadratic.Out, false, delay);
-    //     cb && rotate.onComplete.add(cb);
-    //     rotate.start();
-    // };
 
     Stick.prototype.layDown = function (cb) {
         var game = this.game;
@@ -85,6 +85,16 @@ define(function (require) {
     Stick.prototype.isInSpot = function (stage) {
         var spotRange = stage.getSpotRange();
         return this.isBetween(spotRange.lower, spotRange.upper);
+    };
+
+    Stick.prototype.updateSpeed = function () {
+        var speed = global.getHeroConfig().power.stickSpeed;
+        this.speed = speed ? speed : this.defaultSpeed;
+    };
+
+    Stick.prototype.updateTexture = function () {
+        var texture = global.getHeroConfig().power.stickTexture;
+        this.texture = texture ? texture : this.defaultTexture;
     };
 
     return Stick;

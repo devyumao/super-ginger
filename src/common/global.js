@@ -15,7 +15,8 @@ define(function (require) {
     var storageKey = {
         foodCount: storagePrefix + 'food-count',
         highest: storagePrefix + 'highest',
-        selected: storagePrefix + 'selected'
+        selected: storagePrefix + 'selected',
+        unlocks: storagePrefix+ 'unlocks'
     };
 
     var global = {};
@@ -166,6 +167,7 @@ define(function (require) {
                 id: 0,
                 name: 'boy',
                 chName: '姜饼仔',
+                color: '#f3a156',
                 width: 76,
                 height: 106,
                 paddingRight: 6,
@@ -178,12 +180,15 @@ define(function (require) {
                 },
                 unlockType: 'free',
                 cost: 0,
+                desc: '',
+                powerText: '我有我的勇气',
                 power: {}
             },
             {
                 id: 1,
                 name: 'girl',
                 chName: '姜饼妹',
+                color: '#efbc58',
                 width: 85,
                 height: 112,
                 paddingRight: 4,
@@ -196,14 +201,17 @@ define(function (require) {
                 },
                 unlockType: 'share',
                 cost: 0,
+                desc: '',
+                powerText: '增加出现果子的几率',
                 power: {
-
+                    foodProba: 0.58
                 }
             },
             {
                 id: 2,
                 name: 'cone',
                 chName: '蛋筒夫人',
+                color: '#f55e82',
                 width: 109,
                 height: 190,
                 paddingRight: 15,
@@ -216,14 +224,18 @@ define(function (require) {
                 },
                 unlockType: 'food',
                 cost: 50,
+                desc: '',
+                powerText: '冷却棒棒的延长速度',
                 power: {
-                    
+                    stickSpeed: 6.8,
+                    stickTexture: 'stick-cold'
                 }
             },
             {
                 id: 3,
                 name: 'baguette',
                 chName: '法棍先生',
+                color: '#ea7408',
                 width: 101,
                 height: 159,
                 paddingRight: 10,
@@ -235,12 +247,18 @@ define(function (require) {
                     walk: {fps: 15}
                 },
                 unlockType: 'food',
-                cost: 150
+                cost: 150,
+                desc: '',
+                powerText: '不易出现很窄的柱子',
+                power: {
+
+                }
             },
             {
                 id: 4,
                 name: 'donut',
                 chName: '甜甜圈',
+                color: '#543a22',
                 width: 90,
                 height: 112,
                 paddingRight: 10,
@@ -252,12 +270,18 @@ define(function (require) {
                     walk: {fps: 15}
                 },
                 unlockType: 'food',
-                cost: 250
+                cost: 250,
+                desc: '',
+                powerText: '自动翻越小间隙',
+                power: {
+                    
+                }
             },
             {
                 id: 5,
                 name: 'zongzi',
                 chName: '粽子糖',
+                color: '#d8e480',
                 width: 96,
                 height: 86,
                 paddingRight: 5,
@@ -269,12 +293,18 @@ define(function (require) {
                     walk: {fps: 20}
                 },
                 unlockType: 'food',
-                cost: 300
+                cost: 300,
+                desc: '',
+                powerText: '击中红心，双倍奖励',
+                power: {
+                    
+                }
             },
             {
                 id: 6,
                 name: 'cupcake',
                 chName: '杯糕小子',
+                color: '#a0c8aa',
                 width: 110,
                 height: 137,
                 paddingRight: 12,
@@ -286,9 +316,18 @@ define(function (require) {
                     walk: {fps: 12}
                 },
                 unlockType: 'food',
-                cost: 400
+                cost: 400,
+                desc: '',
+                powerText: '行走速度减慢',
+                power: {
+                    
+                }
             }
         ];
+
+        global.getHeroConfig = function () {
+            return global.herosConfig[global.getSelected()];
+        };
     }
 
     init();
