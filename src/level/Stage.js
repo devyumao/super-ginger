@@ -28,14 +28,14 @@ define(function (require) {
         this.height = game.cache.getImage(this.imageName).height;
         this.currEdgeX = 110;
 
-        this.minWidth = 24;
+        this.updateMinWidth();
+
         this.maxWidth = 110;
-        this.spotWidth = 10; // TODO: 英雄技能影响
 
-        var heroPower = global.getHeroConfig().power;
+        this.updateFoodProba();
 
-        this.defaultFoodProba = 0.5;
-        this.foodProba = heroPower.foodProba ? heroPower.foodProba : this.defaultFoodProba;
+        this.updateSpotMultiple();
+        this.updateSpotWidth();
 
         this._init();
     };
@@ -96,7 +96,7 @@ define(function (require) {
 
     Stage.prototype._createSpot = function (pillar) {
         var spot = this.game.add.image(pillar.width / 2, this.height - config.horizon, 'spot');
-        spot.scale.set(this.spotWidth, 8); // XXX: 先缩放柱子
+        spot.width = this.spotWidth;
         spot.anchor.set(0.5, 0);
         pillar.addChild(spot);
 
@@ -214,9 +214,28 @@ define(function (require) {
         return this.food;
     };
 
+    Stage.prototype.getSpotMultiple = function () {
+        return this.spotMultiple;
+    };
+
     Stage.prototype.updateFoodProba = function () {
         var foodProba = global.getHeroConfig().power.foodProba;
-        this.foodProba = foodProba ? foodProba : this.defaultFoodProba;
+        this.foodProba = foodProba ? foodProba : 0.5;
+    };
+
+    Stage.prototype.updateMinWidth = function () {
+        var minWidth = global.getHeroConfig().power.stageMinWidth;
+        this.minWidth = minWidth ? minWidth : 24;
+    };
+
+    Stage.prototype.updateSpotMultiple = function () {
+        var spotMultiple = global.getHeroConfig().power.spotMultiple;
+        this.spotMultiple = spotMultiple ? spotMultiple : 1;
+    };
+
+    Stage.prototype.updateSpotWidth = function () {
+        var spotWidth = global.getHeroConfig().power.spotWidth;
+        this.spotWidth = spotWidth ? spotWidth : 10;
     };
 
     return Stage;

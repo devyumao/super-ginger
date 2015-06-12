@@ -20,6 +20,10 @@ define(function (require) {
         this.header = null;
         this.container = null;
 
+        this.main = null;
+        this.topEdge = null;
+        this.bottomEdge = null;
+
         this.elements = [];
 
         this.hasHeader = !!options.hasHeader;
@@ -79,6 +83,7 @@ define(function (require) {
         var topEdge = game.add.image(0, 0, 'popup-edge');
         topEdge.anchor.set(0.5, 0);
         body.addChild(topEdge);
+        this.topEdge = topEdge;
 
         var edgeHeight = topEdge.height;
 
@@ -86,11 +91,13 @@ define(function (require) {
         main.scale.set(this.width, this.height - edgeHeight * 2);
         main.anchor.set(0.5, 0);
         body.addChild(main);
+        this.main = main;
 
         var bottomEdge = game.add.image(0, edgeHeight * 2 + main.height, 'popup-edge');
         bottomEdge.scale.y = -1;
         bottomEdge.anchor.set(0.5, 0);
         body.addChild(bottomEdge);
+        this.bottomEdge = bottomEdge;
     };
 
     Popup.prototype._initHeader = function () {
@@ -111,7 +118,7 @@ define(function (require) {
             padding, 3,
             this.title,
             {
-                font: '30px ' + global.fontFamily,
+                font: 'bold 30px ' + global.fontFamily,
                 fill: color.get('white')
             }
         );
@@ -149,7 +156,7 @@ define(function (require) {
 
     Popup.prototype._initContainer = function () {
         var game = this.game;
-        var margin = 12;
+        var margin = this.paddingHorz;
 
         if (this.hasHeader) {
             this.paddingTop = this.header.height;
@@ -163,12 +170,20 @@ define(function (require) {
         this.container = container;
         this.elements.push(container);
 
+        this._initCrop();
+    };
+
+    Popup.prototype._initCrop = function () {
+        var game = this.game;
+        var margin = this.paddingHorz;
+        var container = this.container;
+
         // 框定可视区域
         var crop = this.game.add.graphics(0, 0);
         crop.beginFill(0xffffff);
         crop.drawRect(
             container.x, game.height + this.paddingTop,
-            this.width - margin * 2, this.height - this.paddingTop - this.paddingBottom
+            this.width - margin * 2, this.containerHeight
         );
         crop.endFill();
         container.mask = crop;
@@ -176,32 +191,21 @@ define(function (require) {
     };
 
     Popup.prototype._initContent = function () {
+
     };
 
-    // // HACK
-    // Popup.prototype._initCover = function () {
-    //     var game = this.game;
+    Popup.prototype._setHeight = function (height) {
+        var originHeight = this.height;
+        this.height = height;
+        var heightDiff = height - originHeight;
 
-    //     var upperCover = game.add.button(
-    //         0, 0,
-    //         'transparent',
-    //         function () {
-    //             this._hide();
-    //         },
-    //         this
-    //     );
-    //     upperCover.scale.set(game.width, this.y);
+        this.main.height += heightDiff;
+        this.bottomEdge.y += heightDiff;
 
-    //     var lowerCover = game.add.button(
-    //         0, 0,
-    //         'transparent',
-    //         function () {
-    //             this._hide();
-    //         },
-    //         this
-    //     );
-    //     upperCover.scale.set(game.width, this.y);
-    // };
+        this.container.mask.destroy();
+        this.containerHeight += heightDiff;
+        this._initCrop();
+    };
 
     Popup.prototype._show = function () {
         this.mask.show(500);

@@ -5,6 +5,7 @@
 
 define(function (require) {
 
+    var global = require('common/global');
     var config = require('./config');
 
     var Hero = function (game, options) {
@@ -160,6 +161,8 @@ define(function (require) {
     };
 
     Hero.prototype.change = function (index) {
+        global.setSelected(index);
+
         this.index = index;
         this._initConfig();
 
@@ -178,9 +181,18 @@ define(function (require) {
             stick.updateSpeed();
             // 棒棒材质
             stick.updateTexture();
+            // 额外棒长
+            stick.updateExtraLength();
         }
         stage = level.stage;
+        // 食物几率
         stage.updateFoodProba();
+        // 最小柱宽
+        stage.updateMinWidth();
+        // 糖浆乘数
+        stage.updateSpotMultiple();
+        // 糖浆宽度
+        stage.updateSpotWidth();
     };
 
     return Hero;

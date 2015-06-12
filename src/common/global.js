@@ -9,6 +9,7 @@ define(function (require) {
 
     var ajax = require('common/ajax');
     var url = require('common/url');
+    var util = require('common/util');
     var serverData = require('common/serverData');
 
     var storagePrefix = 'ginger-';
@@ -22,57 +23,91 @@ define(function (require) {
     var global = {};
 
     function init () {
+        handleMode();
+
         handleHerosConfig();
+
+        handleStorage();
+
         handleFont();
-        handleBasePath();
+
         handleFoodCount();
+
         handleHighest();
         handleSelected();
         handleUnlocks();
+
+        handleNickname();
+    }
+
+    function handleMode() {
+        var mode = 'dev';
+
+        global.setMode = function (newMode) {
+            mode = newMode;
+        };
+
+        global.getMode = function () {
+            return mode;
+        };
     }
 
     function handleFont() {
         global.fontFamily = '"Helvetica Neue", Helvetica, STHeiTi, sans-serif';
     }
 
-    function handleBasePath() {
-        var basePath = '';
-
-        global.setBasePath = function (path) {
-            basePath = path;
+    function handleStorage() {
+        global.getStorage = function (keys) {
+            var storage = {};
+            keys.forEach(function (key) {
+                storage[key] = localStorage.getItem(storageKey[key]);
+            });
+            return storage;
         };
 
-        global.getBasePath = function () {
-            return basePath;
+        global.assignStorage = function (keys) {
+            keys.forEach(function (key) {
+                global['assign' + util.firstToUpperCase(key)]();
+            });
+        };
+
+        global.initStorage = function (keys) {
+            keys.forEach(function (key) {
+                global['init' + util.firstToUpperCase(key)]();
+            });
+        };
+
+        global.setStorage = function (obj) {
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    global['set' + util.firstToUpperCase(key)](obj[key], false);
+                }
+            }
         };
     }
 
     function handleFoodCount () {
         var foodCount;
 
-        global.initFoodCount = function (cb) {
-            var key = storageKey.foodCount;
-            foodCount = localStorage.getItem(key);
-            if (!foodCount) {
-                // TODO: server
-                foodCount = 0;
-            }
-            else {
-                foodCount = +foodCount;
-            }
-            cb && cb();
+        global.initFoodCount = function () {
+            foodCount = +localStorage.getItem(storageKey.foodCount);
+            foodCount = foodCount ? +foodCount : 0;
         };
 
         global.getFoodCount = function () {
             return foodCount;
         };
 
-        global.setFoodCount = function (count) {
+        global.setFoodCount = function (count, remote) {
             if (count === foodCount) {
                 return;
             }
 
-            ajax.get({
+            if (typeof remote === 'undefined') {
+                remote = true;
+            }
+
+            remote && ajax.get({
                 url: count > foodCount ? url.ADD_FOOD : url.USE_FOOD,
                 data: {
                     count: Math.abs(count - foodCount)
@@ -87,70 +122,106 @@ define(function (require) {
     function handleHighest () {
         var highest;
 
-        global.initHighest = function (cb) {
-            var key = storageKey.highest;
-            highest = localStorage.getItem(key);
-            if (!highest) {
-                // TODO: server
-                highest = 0;
-            }
-            else {
-                highest = +highest;
-            }
-            cb && cb();
+        global.assignHighest = function () {
+            highest = +localStorage.getItem(storageKey.highest);
+        };
+
+        global.initHighest = function () {
+            global.setHighest(0);
         };
 
         global.getHighest = function () {
             return highest;
         };
 
-        global.setHighest = function (score) {
-            highest = score;
-            var key = storageKey.highest;
-            // TODO: server
-            localStorage.setItem(key, score);
+        global.setHighest = function (score, remote) {
+            highest = +score;
+        
+            if (typeof remote === 'undefined') {
+                remote = true;
+            }
+
+            remote && serverData.save({
+                highest: highest
+            });
+
+            localStorage.setItem(storageKey.highest, highest);
         };
     }
 
     // 被选英雄
     function handleSelected () {
-        var selected = localStorage.getItem(storageKey.selected);
-        if (selected === null) {
-            selected = 0;
-        }
-        selected = selected === null ? 0 : +selected;
+        var selected;
 
+        global.assignSelected = function () {
+            selected = +localStorage.getItem(storageKey.selected);
+        };
+
+        global.initSelected = function () {
+            global.setSelected(0);
+        };
+        
         global.getSelected = function () {
             return selected;
         };
 
-        global.setSelected = function (index) {
-            selected = index;
-            localStorage.setItem(storageKey.selected, index);
+        global.setSelected = function (index, remote) {
+            selected = +index;
+
+            if (typeof remote === 'undefined') {
+                remote = true;
+            }
+
+            remote && serverData.save({
+                selected: selected
+            });
+
+            localStorage.setItem(storageKey.selected, selected);
         };
     }
 
     // 解锁列
     function handleUnlocks () {
-        var unlocks = localStorage.getItem(storageKey.unlocks);
-        if (unlocks) {
-            unlocks = JSON.parse(unlocks);
+        var unlocks;
+
+        function setUnlock(index, value) {
+            unlocks[index] = value;
+            saveUnlocks();
         }
-        else {
+
+        function saveUnlocks(remote) {
+            var unlocksStr = JSON.stringify(unlocks);
+
+            if (typeof remote === 'undefined') {
+                remote = true;
+            }
+            remote && serverData.save({
+                unlocks: unlocksStr
+            });
+
+            localStorage.setItem(storageKey.unlocks, unlocksStr);
+        }
+
+        global.assignUnlocks = function () {
+            unlocks = JSON.parse(localStorage.getItem(storageKey.unlocks));
+        };
+
+        global.initUnlocks = function () {
             unlocks = [1];
             for (var i = 1, len = global.herosConfig.length; i < len; ++i) {
                 unlocks.push(0);
             }
-        }
+            saveUnlocks(unlocks);
+        };
 
         global.getUnlock = function (index) {
             return unlocks[index];
         };
 
-        function setUnlock (index, value) {
-            unlocks[index] = value;
-            localStorage.setItem(storageKey.unlocks, JSON.stringify(unlocks));
-        }
+        global.setUnlocks = function (newUnlocks, remote) {
+            unlocks = util.isArray(newUnlocks) ? unlocks : JSON.parse(newUnlocks);
+            saveUnlocks(remote);
+        };
 
         global.unlock = function (index) {
             setUnlock(index, 1);
@@ -158,6 +229,18 @@ define(function (require) {
 
         global.lock = function (index) {
             setUnlock(index, 0);
+        };
+    }
+
+    function handleNickname() {
+        var nickname;
+
+        global.getNickname = function () {
+            return nickname;
+        };
+
+        global.setNickname = function (name) {
+            nickname = name;
         };
     }
 
@@ -180,7 +263,7 @@ define(function (require) {
                 },
                 unlockType: 'free',
                 cost: 0,
-                desc: '',
+                desc: '从烤箱中逃离出来，向着\n未知前方探索的姜饼仔',
                 powerText: '我有我的勇气',
                 power: {}
             },
@@ -201,8 +284,8 @@ define(function (require) {
                 },
                 unlockType: 'share',
                 cost: 0,
-                desc: '',
-                powerText: '增加出现果子的几率',
+                desc: '哥哥出去闯了，有点放心\n不下呢，我也要加油！',
+                powerText: '增加出现果果的几率',
                 power: {
                     foodProba: 0.58
                 }
@@ -224,7 +307,7 @@ define(function (require) {
                 },
                 unlockType: 'food',
                 cost: 50,
-                desc: '',
+                desc: '发型贵气的蛋筒夫人看上\n去有些高冷，其实她的心\n很容易融化哟',
                 powerText: '冷却棒棒的延长速度',
                 power: {
                     stickSpeed: 6.8,
@@ -244,14 +327,14 @@ define(function (require) {
                     down: {fps: 6},
                     up: {fps: 10},
                     kick: {fps: 15},
-                    walk: {fps: 15}
+                    walk: {fps: 12}
                 },
                 unlockType: 'food',
                 cost: 150,
-                desc: '',
-                powerText: '不易出现很窄的柱子',
+                desc: '从香榭丽舍大街某小卖部\n走出的法式长棍，也在力\n争成为世界第一棍',
+                powerText: '不会出现很窄的柱子',
                 power: {
-
+                    stageMinWidth: 30
                 }
             },
             {
@@ -271,10 +354,10 @@ define(function (require) {
                 },
                 unlockType: 'food',
                 cost: 250,
-                desc: '',
+                desc: '永远一副惊讶表情的甜甜\n圈，说不定会给这个世界\n带来一些惊喜',
                 powerText: '自动翻越小间隙',
                 power: {
-                    
+                    stickExtraLength: 12
                 }
             },
             {
@@ -294,10 +377,10 @@ define(function (require) {
                 },
                 unlockType: 'food',
                 cost: 300,
-                desc: '',
-                powerText: '击中红心，双倍奖励',
+                desc: '来自东方的神秘角色，虽\n然被称为糖，但是其内心\n是甜是咸还难下定论哦',
+                powerText: '命中糖浆，双倍奖励',
                 power: {
-                    
+                    spotMultiple: 2
                 }
             },
             {
@@ -317,10 +400,10 @@ define(function (require) {
                 },
                 unlockType: 'food',
                 cost: 400,
-                desc: '',
-                powerText: '行走速度减慢',
+                desc: '为了奔跑不息传递爱与勇\n气，而锻炼出了蓬松味美\n的肌肉',
+                powerText: '扩大糖浆的范围',
                 power: {
-                    
+                    spotWidth: 12
                 }
             }
         ];

@@ -14,6 +14,7 @@ define(function (require) {
         this.mask = null;
         this.body = null;
         this.score = options.score;
+        this.hasNewRecord = options.hasNewRecord;
 
         this._init();
     };
@@ -106,7 +107,7 @@ define(function (require) {
         highestValue.anchor.set(0.5, 0);
         board.addChild(highestValue);
 
-        if (this.score > hightest) {
+        if (this.hasNewRecord) {
             var newRecord = game.add.image(
                 scoreTitle.x + scoreTitle.width / 2 + 18,
                 scoreTitle.y,

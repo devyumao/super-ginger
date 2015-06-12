@@ -16,7 +16,7 @@ gulp.task('script:src', function () {
     return gulp.src('src/**/*.js', {base: requireConfig.baseUrl})
         .pipe(amdOptimizer(requireConfig, options))
         .pipe(concat('game.js'))
-        .pipe(uglify({mangle: false}))
+        // .pipe(uglify({mangle: false}))
         .pipe(gulp.dest('dist/asset'));
 });
 

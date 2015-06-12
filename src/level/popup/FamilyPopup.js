@@ -5,6 +5,8 @@
 
 define(function (require) {
 
+    // TODO: upActive 融入 btnUp
+
     var global = require('common/global');
     var color = require('common/color');
     var util = require('common/util');
@@ -170,35 +172,51 @@ define(function (require) {
         nameText.alpha = 0.7;
         panelCtn.addChild(nameText);
 
+        var titleFontStyle = {
+            font: 'bold 19px ' + global.fontFamily,
+            fill: color.get('coffee'),
+            strokeThickness: 4,
+            stroke: color.get('beige')
+        };
+
         var descTitleText = game.add.text(
             panel.dividingX + panel.dividingWidth + 10, 10,
             '简介',
-            {
-                font: 'bold 19px ' + global.fontFamily,
-                fill: color.get('coffee'),
-                strokeThickness: 4,
-                stroke: color.get('beige')
-            }
+            titleFontStyle
         );
         panelCtn.addChild(descTitleText);
 
+        var contentFontStyle = {
+            font: '17px ' + global.fontFamily,
+            fill: color.get('darker-grey')
+        };
+
+        // TODO: 自动加\n
+        var descText = game.add.text(
+            descTitleText.x + descTitleText.width + 6, descTitleText.y + 4,
+            config.desc,
+            contentFontStyle
+        );
+        panelCtn.addChild(descText);
+
         var powerTilteText = game.add.text(
-            panel.dividingX + panel.dividingWidth + 10, descTitleText.y + descTitleText.height + 10,
+            panel.dividingX + panel.dividingWidth + 10, descText.y + descText.height + 5,
             '超能',
-            {
-                font: 'bold 19px ' + global.fontFamily,
-                fill: color.get('coffee'),
-                strokeThickness: 4,
-                stroke: color.get('beige')
-            }
+            titleFontStyle
         );
         panelCtn.addChild(powerTilteText);
+
+        var powerText = game.add.text(
+            powerTilteText.x + powerTilteText.width + 6, powerTilteText.y + 4,
+            global.getUnlock(index) ? config.powerText : '? ? ?',
+            contentFontStyle
+        );
+        panelCtn.addChild(powerText);
     };
 
     FamilyPopup.prototype._select = function (index) {
         var hero = this.game.state.states.level.hero;
         hero.change(index);
-        global.setSelected(index);
     };
 
     FamilyPopup.prototype._initBtnSelect = function (config, index, options) {
@@ -243,25 +261,30 @@ define(function (require) {
                         return;
                     }
 
-                    this._hide(false);
-                    if (global.getFoodCount() >= config.cost) {
-                        var Confirm = require('common/ui/Confirm');
-                        new Confirm(
-                            game,
-                            {
-                                text: '确定用 ' + config.cost +' 果子解锁\n【' + config.chName + '】？',
-                                onConfirm: function () {
-                                    global.setFoodCount(global.getFoodCount() - config.cost);
-                                    global.unlock(index);
-                                    me._select(index);
-                                }
+                    setTimeout( // 延时仅仅是为了玩家体验
+                        function () {
+                            me._hide(false);
+                            if (global.getFoodCount() >= config.cost) {
+                                var Confirm = require('common/ui/Confirm');
+                                new Confirm(
+                                    game,
+                                    {
+                                        text: '确定用 ' + config.cost +' 果果解锁\n【' + config.chName + '】？',
+                                        onConfirm: function () {
+                                            global.setFoodCount(global.getFoodCount() - config.cost);
+                                            global.unlock(index);
+                                            me._select(index);
+                                        }
+                                    }
+                                );
                             }
-                        );
-                    }
-                    else {
-                        var StorePopup = require('./StorePopup');
-                        new StorePopup(game);
-                    }
+                            else {
+                                var StorePopup = require('./StorePopup');
+                                new StorePopup(game);
+                            }
+                        },
+                        150
+                    );
                 },
                 this
             );
@@ -333,6 +356,7 @@ define(function (require) {
             },
             this
         );
+
         this.elements.push(btnDown);
         this.btnDown = btnDown;
 
@@ -346,8 +370,33 @@ define(function (require) {
             },
             this
         );
+        
         this.elements.push(btnUp);
         this.btnUp = btnUp;
+
+        // 这边的状态关联较特殊，所以不用 util.addHover
+        var me = this;
+        ['Down', 'Up'].forEach(function (type) {
+            var events = me['btn' + type].events;
+            var activeKey = type.toLowerCase() + 'Active';
+
+            events.onInputDown.add(
+                function (target) {
+                    if (me[activeKey]) {
+                        target.alpha = 0.85;
+                    }
+                },
+                me
+            );
+            events.onInputUp.add(
+                function (target) {
+                    if (me[activeKey]) {
+                        target.alpha = 1;
+                    }
+                },
+                me
+            );
+        });
 
         this._updateBtns();
     };

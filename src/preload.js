@@ -9,8 +9,7 @@ define(function (require) {
 
     function preload() {
         var game = this.game;
-
-        var path = global.getBasePath() +'/img/';
+        var path = (global.getMode() === 'dev' ? 'src' : 'asset') +'/img/';
 
         // TODO: 组织 img 目录
         game.load.image('transparent', path + 'transparent.png');
@@ -42,6 +41,7 @@ define(function (require) {
         game.load.image('btn-down', path + 'btn-down.png');
         game.load.image('btn-unlock', path + 'btn-unlock.png');
         game.load.image('btn-confirm', path + 'btn-confirm.png');
+        game.load.image('me-tip', path + 'me-tip.png');
 
         game.load.image('end-board', path + 'end-board.png');
         game.load.image('end-btn', path + 'end-btn.png');
@@ -75,20 +75,70 @@ define(function (require) {
 
         game.load.spritesheet('stage-1', path + 'stage-1.png', 300, 266);
         game.load.spritesheet('stage-2', path + 'stage-2.png', 300, 243);
-        game.load.spritesheet('stage-3', path + 'stage-3.png', 300, 247);
+        game.load.spritesheet('stage-3', path + 'stage-3.png', 300, 245);
 
         game.load.image('thanks', path + 'thanks.png');
     }
 
     function create() {
-        var me = this;
+        global.getMode() === 'dev' && global.initFoodCount();
 
-        global.getBasePath() === 'src' && global.initFoodCount(); // TODO: dev or prod
-        // FIX: 并发请求
-        global.initHighest(function () {
-            // 与以往不同，menu -> level 是连贯场景，所以实际是同一 state
-            me.state.start('level', true, false, 'play');
+        // TODO: serverData
+        var me = this;
+        var keys = ['highest', 'selected', 'unlocks'];
+        var storage = global.getStorage(keys);
+        var serverKeys = [];
+        for (var key in storage) {
+            if (storage.hasOwnProperty(key) && storage[key] === null) {
+                serverKeys.push(key);
+            }
+        }
+        var localKeys = [];
+        keys.forEach(function (key) {
+            if (serverKeys.indexOf(key) === -1) {
+                localKeys.push(key);
+            }
         });
+
+        // for test
+        // localkeys = [];
+        // serverKeys = keys;
+        
+        localKeys.length && global.assignStorage(localKeys);
+
+        if (serverKeys.length) {
+            var serverData = require('common/serverData');
+            serverData.load(
+                serverKeys,
+                function (res) {
+                    res = JSON.parse(res);
+                    var missingKeys = [];
+                    serverKeys.forEach(function (key) {
+                        if (!res.hasOwnProperty(key)) {
+                            missingKeys.push(key);
+                        }
+                    });
+                    global.initStorage(missingKeys);
+                    global.setStorage(res);
+                    startLevel();
+                },
+                function (err) {
+                    if (global.getMode() === 'dev' || global.getNickname === 'devyumao') {
+                        global.initStorage(serverKeys);
+                    }
+                    startLevel();
+                }
+            );
+        }
+        else {
+            startLevel();
+        }
+
+
+        function startLevel() {
+            // 与以往不同，menu -> level 是连贯场景，所以实际是同一 state
+            me.state.start('level', true, false, 'menu');
+        }
     }
 
     return {

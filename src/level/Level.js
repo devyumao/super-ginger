@@ -159,15 +159,22 @@ define(function (require) {
 
         var highest = global.getHighest();
         var score = this.scoreboard.getScore();
+        var hasNewRecord = score > highest;
 
-        score > highest && global.setHighest(score);
+        hasNewRecord && global.setHighest(score);
 
         this.stick.fall();
         this.hero.fall(function () {
             me.game.plugins.screenShake.shake(10);
             setTimeout(
                 function () {
-                    new End(me.game, {score: score});
+                    new End(
+                        me.game,
+                        {
+                            score: score,
+                            hasNewRecord: hasNewRecord
+                        }
+                    );
                 },
                 400
             );
@@ -183,7 +190,7 @@ define(function (require) {
         // 加分文本
         var pointsText = game.add.text(
             this.stage.getSpotX(), game.height - config.horizon,
-            '+1',
+            '+' + this.stage.getSpotMultiple(),
             {
                 font: 'bold 20px ' + global.fontFamily,
                 fill: color.get('dark-grey')
@@ -208,9 +215,10 @@ define(function (require) {
         risePoints.start();
 
         // 赞美之词
+        var praises = ['赞 哟 !', '好 棒 !', '└(^o^)┘'];
         var praiseText = game.add.text(
             game.width / 2, 230,
-            '赞 哟 !',
+            praises[game.rnd.between(0, praises.length - 1)],
             {
                 font: 'bold 36px ' + global.fontFamily,
                 fill: color.get('dark-grey')
@@ -269,9 +277,9 @@ define(function (require) {
         stick.layDown(function () {
             me.isTouchEnabled = true;
 
-            if (stick.getLength() > stage.getInterval()) { // 长度足够
+            if (stick.getFullLength() > stage.getInterval()) { // 长度足够
                 if (stick.isInSpot(stage)) { // 命中红区
-                    scoreboard.addScore(1);
+                    scoreboard.addScore(stage.getSpotMultiple());
                     me._showReward();
                 }
 

@@ -25,7 +25,9 @@
 <body>
     <script>
     require(['main'], function (main) {
-        require('common/global').setBasePath('src');
+        var global = require('common/global');
+        global.setMode('dev');
+        global.setNickname('devyumao');
         main.init();
     });
     </script>

@@ -13,13 +13,9 @@ define(function (require) {
         this.image = null;
         this.trash = null;
 
-        var heroPower = global.getHeroConfig().power;
-
-        this.defaultSpeed = 8;
-        this.speed = heroPower.stickSpeed ? heroPower.stickSpeed : this.defaultSpeed;
-
-        this.defaultTexture = 'stick';
-        this.texture = heroPower.stickTexture ? heroPower.stickTexture : this.defaultTexture;
+        this.updateSpeed();
+        this.updateTexture();
+        this.updateExtraLength();
 
         this._init();
     };
@@ -73,13 +69,17 @@ define(function (require) {
         return this.image.height;
     };
 
+    Stick.prototype.getFullLength = function () {
+        return this.image.height + this.extraLength;
+    };
+
     Stick.prototype.isBetween = function (lower, upper) {
         var length = this.getLength();
         return length > lower && length < upper;
     };
 
     Stick.prototype.isInStage = function (stage) {
-        return this.isBetween(stage.getInterval(), stage.getNextEdgeX() - stage.getCurrEdgeX());
+        return this.isBetween(stage.getInterval() - this.extraLength, stage.getNextEdgeX() - stage.getCurrEdgeX());
     };
 
     Stick.prototype.isInSpot = function (stage) {
@@ -89,12 +89,17 @@ define(function (require) {
 
     Stick.prototype.updateSpeed = function () {
         var speed = global.getHeroConfig().power.stickSpeed;
-        this.speed = speed ? speed : this.defaultSpeed;
+        this.speed = speed ? speed : 8;
     };
 
     Stick.prototype.updateTexture = function () {
         var texture = global.getHeroConfig().power.stickTexture;
-        this.texture = texture ? texture : this.defaultTexture;
+        this.texture = texture ? texture : 'stick';
+    };
+
+    Stick.prototype.updateExtraLength = function () {
+        var extraLength = global.getHeroConfig().power.stickExtraLength;
+        this.extraLength = extraLength ? extraLength : 0;
     };
 
     return Stick;

@@ -12,5 +12,6 @@ define(function () {
         ADD_FOOD: 'food.php?type=plus',
         LOAD_DATA: 'storage.php',
         SAVE_DATA: 'storage.php',
+        GET_RANK: 'rank.php'
     };
 });

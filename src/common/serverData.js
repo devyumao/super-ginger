@@ -8,20 +8,18 @@ define(function () {
     var ajax = require('common/ajax');
     var url = require('common/url');
 
-    function load(key, success, failure) {
+    function load(keys, success, failure) {
         ajax.get({
             url: url.LOAD_DATA,
             data: {
-                key: key
+                key: keys.join(',')
             },
             success: success,
             failure: failure
         });
     }
 
-    function save(key, value, success, failure) {
-        var data = {};
-        data[key] = value;
+    function save(data, success, failure) {
         ajax.post({
             url: url.SAVE_DATA,
             data: data,
