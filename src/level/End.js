@@ -8,6 +8,7 @@ define(function (require) {
     var global = require('common/global');
     var color = require('common/color');
     var util = require('common/util');
+    var Mask = require('common/ui/Mask');
 
     var End = function (game, options) {
         this.game = game;
@@ -27,6 +28,8 @@ define(function (require) {
         this._initBtns();
 
         this._show();
+
+        this._updateShare();
     };
 
     End.prototype._initMask = function () {
@@ -130,7 +133,6 @@ define(function (require) {
     };
 
     End.prototype._transition = function (cb) {
-        var Mask = require('common/ui/Mask');
         var mask = new Mask(this.game, {alpha: 1});
         mask.show(150, cb);
     };
@@ -139,12 +141,44 @@ define(function (require) {
         var me = this;
         var game = this.game;
         var body = this.body;
+
         var btnConfigs = [
             {
                 texture: 'end-btn-share',
                 text: '炫耀一下',
                 onClick: function () {
-                    
+                    var duration = 150;
+                    var mask = new Mask(this.game, {alpha: 0.6});
+                    mask.show(duration);
+
+                    var tipText = game.add.text(
+                        game.width / 2, 200,
+                        '点击右上角\n分享到朋友圈',
+                        {
+                            font: 'bold 42px ' + global.fontFamily,
+                            fill: color.get('white'),
+                            align: 'center'
+                        }
+                    );
+                    tipText.anchor.set(0.5, 0);
+
+                    var ease = Phaser.Easing.Quadratic.InOut;
+                    game.add.tween(tipText)
+                        .from({alpha: 0}, duration, this.ease, true);
+
+                    setTimeout(
+                        function () {
+                            var duration = 400;
+                            mask.hide(duration);
+                            var hideTip = game.add.tween(tipText)
+                                .to({alpha: 0}, duration, this.ease);
+                            hideTip.onComplete.add(function () {
+                                tipText.destroy();
+                            });
+                            hideTip.start();
+                        },
+                        800
+                    );
                 }
             },
             {
@@ -191,6 +225,13 @@ define(function (require) {
         this.mask.show(duration);
         this.game.add.tween(this.body)
             .from({alpha: 0}, duration, Phaser.Easing.Quadratic.InOut, true);
+    };
+
+    End.prototype._updateShare = function () {
+        global.setShareText(
+            '我的『' + global.getHeroConfig().chName + '』勇闯了' + this.score + '道甜点关，你也来试试吧！'
+        );
+        require('common/weixin').updateShare();
     };
 
     return End;

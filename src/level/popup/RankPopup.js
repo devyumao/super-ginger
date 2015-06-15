@@ -29,42 +29,49 @@ define(function (require) {
     util.inherits(RankPopup, Popup);
 
     RankPopup.prototype._initContent = function () {
-        if (global.getMode() === 'dev') {
-            var res = {
-                me: 2,
-                list: [
-                    {nickname: '武小盼', highest: 250},
-                    {nickname: 'devyumao', highest: 249},
-                    {nickname: 'ishowshao', highest: 244},
-                    {nickname: '姜饼仔', highest: 233},
-                    {nickname: '姜饼妹', highest: 190}
-                ]
-            };
-            this._preprocessData(res);
-        }
-        else {
-            var me = this;
-            require('common/ajax').get({
-                url: require('common/url').GET_RANK,
-                success: function (res) {
-                    res = JSON.parse(res);
-                    me._preprocessData(res);
-                }
-            });
-        }
+        // if (global.getMode() === 'dev') {
+        //     var res = {
+        //         me: 2,
+        //         list: [
+        //             {nickname: '武小盼', highest: 250},
+        //             {nickname: 'devyumao', highest: 249},
+        //             {nickname: 'ishowshao', highest: 244},
+        //             {nickname: '姜饼仔', highest: 233},
+        //             {nickname: '姜饼妹', highest: 190}
+        //         ]
+        //     };
+        //     this._preprocessData(res);
+        // }
+        // else {}
+        var me = this;
+        require('common/ajax').get({
+            url: require('common/url').GET_RANK,
+            success: function (res) {
+                res = JSON.parse(res);
+                me._preprocessData(res);
+            }
+        });
     };
 
     RankPopup.prototype._preprocessData = function (data) {
-        var list = data.list.slice(0, 5);
+        var list;
+
         var myRank = data.me;
+        
         if (myRank > 5) {
+            list = data.list.slice(0, 4);
+            
             list.push({
                 nickname: global.getNickname(),
                 highest: global.getHighest(),
                 rank: myRank
             });
-            this._setHeight(this.height + this.rowHeight);
+            // this._setHeight(this.height + this.rowHeight);
         }
+        else {
+            list = data.list.slice(0, 5);
+        }
+        
         this._initRows(list);
     };
 

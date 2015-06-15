@@ -40,6 +40,9 @@ define(function (require) {
 
         this.theme = this.game.rnd.between(1, 3);
         // this.theme = 3;
+
+        global.resetShareText();
+        require('common/weixin').updateShare();
     };
 
     // 转场
@@ -163,18 +166,29 @@ define(function (require) {
 
         hasNewRecord && global.setHighest(score);
 
-        this.stick.fall();
-        this.hero.fall(function () {
+        var stick = this.stick;
+        stick.fall();
+
+        var hero = this.hero;
+        hero.fall(function () {
             me.game.plugins.screenShake.shake(10);
             setTimeout(
                 function () {
-                    new End(
-                        me.game,
-                        {
-                            score: score,
-                            hasNewRecord: hasNewRecord
-                        }
-                    );
+                    if (hero.power.doubleLife) { // 双命重生
+                        hero.sustainLife();
+                        stick.setForPlay();
+                        hero.twinkle();
+                        me.isHoldEnabled = true;
+                    }
+                    else {
+                        new End(
+                            me.game,
+                            {
+                                score: score,
+                                hasNewRecord: hasNewRecord
+                            }
+                        );
+                    }
                 },
                 400
             );
@@ -376,7 +390,6 @@ define(function (require) {
                 break;
         }
 
-        // for test
         // new End(this.game, {score: 29});
 
         this._transition();

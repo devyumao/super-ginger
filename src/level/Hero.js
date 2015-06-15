@@ -74,7 +74,6 @@ define(function (require) {
     Hero.prototype._act = function (action, loop) {
         var sprite = this.sprite;
         var key = [this.name, action].join('-');
-        // key = 'macaron';
         if (sprite.key === key) {
             return;
         }
@@ -160,8 +159,8 @@ define(function (require) {
         return this.sprite.width;
     };
 
-    Hero.prototype.change = function (index) {
-        global.setSelected(index);
+    Hero.prototype.change = function (index, temporary) {
+        global.setSelected(index, !temporary);
 
         this.index = index;
         this._initConfig();
@@ -193,6 +192,24 @@ define(function (require) {
         stage.updateSpotMultiple();
         // 糖浆宽度
         stage.updateSpotWidth();
+
+        // 还原 selected index
+        if (temporary) {
+            global.setSelected(this.power.previousLife, false);
+        }
+    };
+
+    // 续命大法好
+    Hero.prototype.sustainLife = function () {
+        this.change(this.power.nextLife, true);
+        this.setForPlay(false);
+    };
+
+    Hero.prototype.twinkle = function (cb) {
+        var twinkle = this.game.add.tween(this.sprite)
+            .from({alpha: 0}, 200, Phaser.Easing.Linear.None, true, 0, 1, true);
+        cb && twinkle.onComplete.add(cb);
+        twinkle.start();
     };
 
     return Hero;

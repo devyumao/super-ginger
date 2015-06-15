@@ -66,6 +66,7 @@ define(function (require) {
             this
         );
         btnConfirm.anchor.set(0, 1);
+        util.addHover(btnConfirm);
         container.addChild(btnConfirm);
 
         var btnCancel = game.add.button(
@@ -77,6 +78,7 @@ define(function (require) {
             this
         );
         btnCancel.anchor.set(0, 1);
+        util.addHover(btnCancel);
         container.addChild(btnCancel);
 
         var fontStyle = {

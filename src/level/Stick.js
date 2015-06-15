@@ -37,6 +37,12 @@ define(function (require) {
         this.image = image;
     };
 
+    Stick.prototype.setForPlay = function () {
+        var image = this.image;
+        image.height = 0;
+        image.angle = 0;
+    };
+
     Stick.prototype.lengthen = function () {
         if (this.image.height < this.game.height - config.horizon) {
             this.image.height += this.speed;

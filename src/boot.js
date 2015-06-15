@@ -5,6 +5,13 @@
 
 define(function (require) {
 
+    var global = require('common/global');
+
+    function preload() {
+        var path = (global.getMode() === 'dev' ? 'src' : 'asset') +'/img/';
+        this.game.load.spritesheet('boy-walk', path + 'boy/' + 'walk.png', 76, 106);
+    }
+
     function create() {
         var game = this.game;
 
@@ -29,6 +36,7 @@ define(function (require) {
     }
 
     return {
+        preload: preload,
         create: create
     };
 

@@ -17,7 +17,8 @@ define(function (require) {
         foodCount: storagePrefix + 'food-count',
         highest: storagePrefix + 'highest',
         selected: storagePrefix + 'selected',
-        unlocks: storagePrefix+ 'unlocks'
+        unlocks: storagePrefix + 'unlocks',
+        shared: storagePrefix + 'shared'
     };
 
     var global = {};
@@ -36,8 +37,11 @@ define(function (require) {
         handleHighest();
         handleSelected();
         handleUnlocks();
+        handleShared();
 
         handleNickname();
+
+        handleShareText();
     }
 
     function handleMode() {
@@ -84,6 +88,14 @@ define(function (require) {
                 }
             }
         };
+
+        global.clearStorage = function () {
+            for (var key in storageKey) {
+                if (storageKey.hasOwnProperty(key)) {
+                    localStorage.removeItem(storageKey[key]);
+                }
+            }
+        };
     }
 
     function handleFoodCount () {
@@ -92,25 +104,26 @@ define(function (require) {
         global.initFoodCount = function () {
             foodCount = +localStorage.getItem(storageKey.foodCount);
             foodCount = foodCount ? +foodCount : 0;
+            // foodCount = 2100;
         };
 
         global.getFoodCount = function () {
             return foodCount;
         };
 
-        global.setFoodCount = function (count, remote) {
+        global.setFoodCount = function (count, cb) {
             if (count === foodCount) {
                 return;
             }
 
-            if (typeof remote === 'undefined') {
-                remote = true;
-            }
-
-            remote && ajax.get({
+            ajax.get({
                 url: count > foodCount ? url.ADD_FOOD : url.USE_FOOD,
                 data: {
                     count: Math.abs(count - foodCount)
+                },
+                success: function (res) {
+                    res = JSON.parse(res);
+                    res.success && cb && cb();
                 }
             });
 
@@ -180,6 +193,35 @@ define(function (require) {
         };
     }
 
+    function handleShared() {
+        var shared;
+
+        global.assignShared = function () {
+            shared = +localStorage.getItem(storageKey.shared);
+        };
+
+        global.initShared = function () {
+            global.setShared(0);
+        };
+
+        global.getShared = function () {
+            return shared;
+        };
+
+        global.setShared = function (newShared, remote) {
+            shared = +newShared;
+
+            if (typeof remote === 'undefined') {
+                remote = true;
+            }
+            remote && serverData.save({
+                shared: shared
+            });
+
+            localStorage.setItem(storageKey.shared, shared);
+        };
+    }
+
     // 解锁列
     function handleUnlocks () {
         var unlocks;
@@ -244,6 +286,22 @@ define(function (require) {
         };
     }
 
+    function handleShareText() {
+        var shareText;
+
+        global.resetShareText = function () {
+            shareText = '快来和姜饼人与他的朋友们一同勇闯甜点世界吧!';
+        };
+
+        global.getShareText = function () {
+            return shareText;
+        };
+
+        global.setShareText = function (text) {
+            shareText = text;
+        };
+    }
+
     function handleHerosConfig() {
         global.herosConfig = [
             {
@@ -258,8 +316,8 @@ define(function (require) {
                 actions: {
                     down: {fps: 6},
                     up: {fps: 10},
-                    kick: {fps: 24},
-                    walk: {fps: 28}
+                    kick: {fps: 15},
+                    walk: {fps: 15}
                 },
                 unlockType: 'free',
                 cost: 0,
@@ -279,8 +337,8 @@ define(function (require) {
                 actions: {
                     down: {fps: 6},
                     up: {fps: 10},
-                    kick: {fps: 24},
-                    walk: {fps: 28}
+                    kick: {fps: 15},
+                    walk: {fps: 15}
                 },
                 unlockType: 'share',
                 cost: 0,
@@ -292,26 +350,25 @@ define(function (require) {
             },
             {
                 id: 2,
-                name: 'cone',
-                chName: '蛋筒夫人',
-                color: '#f55e82',
-                width: 109,
-                height: 190,
-                paddingRight: 15,
+                name: 'cupcake',
+                chName: '杯糕小子',
+                color: '#a0c8aa',
+                width: 110,
+                height: 137,
+                paddingRight: 12,
                 scale: 0.5,
                 actions: {
                     down: {fps: 5},
-                    up: {fps: 15},
+                    up: {fps: 6},
                     kick: {fps: 15},
-                    walk: {fps: 15}
+                    walk: {fps: 12}
                 },
                 unlockType: 'food',
                 cost: 50,
-                desc: '发型贵气的蛋筒夫人看上\n去有些高冷，其实她的心\n很容易融化哟',
-                powerText: '冷却棒棒的延长速度',
+                desc: '为了传递爱与勇气而奔跑\n不息，锻炼出了蓬松味美\n的肌肉',
+                powerText: '扩大糖浆的范围',
                 power: {
-                    stickSpeed: 6.8,
-                    stickTexture: 'stick-cold'
+                    spotWidth: 12
                 }
             },
             {
@@ -332,36 +389,13 @@ define(function (require) {
                 unlockType: 'food',
                 cost: 150,
                 desc: '从香榭丽舍大街某小卖部\n走出的法式长棍，也在力\n争成为世界第一棍',
-                powerText: '不会出现很窄的柱子',
+                powerText: '不会出现过窄的柱子',
                 power: {
                     stageMinWidth: 30
                 }
             },
             {
                 id: 4,
-                name: 'donut',
-                chName: '甜甜圈',
-                color: '#543a22',
-                width: 90,
-                height: 112,
-                paddingRight: 10,
-                scale: 0.5,
-                actions: {
-                    down: {fps: 6},
-                    up: {fps: 10},
-                    kick: {fps: 15},
-                    walk: {fps: 15}
-                },
-                unlockType: 'food',
-                cost: 250,
-                desc: '永远一副惊讶表情的甜甜\n圈，说不定会给这个世界\n带来一些惊喜',
-                powerText: '自动翻越小间隙',
-                power: {
-                    stickExtraLength: 12
-                }
-            },
-            {
-                id: 5,
                 name: 'zongzi',
                 chName: '粽子糖',
                 color: '#d8e480',
@@ -376,7 +410,7 @@ define(function (require) {
                     walk: {fps: 20}
                 },
                 unlockType: 'food',
-                cost: 300,
+                cost: 250,
                 desc: '来自东方的神秘角色，虽\n然被称为糖，但是其内心\n是甜是咸还难下定论哦',
                 powerText: '命中糖浆，双倍奖励',
                 power: {
@@ -384,26 +418,95 @@ define(function (require) {
                 }
             },
             {
+                id: 5,
+                name: 'donut',
+                chName: '甜甜圈',
+                color: '#543a22',
+                width: 90,
+                height: 112,
+                paddingRight: 10,
+                scale: 0.5,
+                actions: {
+                    down: {fps: 6},
+                    up: {fps: 10},
+                    kick: {fps: 15},
+                    walk: {fps: 15}
+                },
+                unlockType: 'food',
+                cost: 350,
+                desc: '永远一副惊讶表情的甜甜\n圈，说不定会给这个世界\n带来一些惊喜',
+                powerText: '自动翻越小间隙',
+                power: {
+                    stickExtraLength: 12
+                }
+            },
+            {
                 id: 6,
-                name: 'cupcake',
-                chName: '杯糕小子',
-                color: '#a0c8aa',
-                width: 110,
-                height: 137,
-                paddingRight: 12,
+                name: 'cone',
+                chName: '蛋筒夫人',
+                color: '#f55e82',
+                width: 109,
+                height: 190,
+                paddingRight: 15,
                 scale: 0.5,
                 actions: {
                     down: {fps: 5},
+                    up: {fps: 15},
+                    kick: {fps: 15},
+                    walk: {fps: 15}
+                },
+                unlockType: 'food',
+                cost: 500,
+                desc: '发型贵气的蛋筒夫人看上\n去有些高冷，其实她的心\n很容易融化哟',
+                powerText: '冷却棒棒的延长速度',
+                power: {
+                    stickSpeed: 6.8,
+                    stickTexture: 'stick-cold'
+                }
+            },
+            {
+                id: 7,
+                name: 'macaron',
+                chName: '双生马卡龙',
+                color: '#a0c8aa',
+                width: 105,
+                height: 128,
+                paddingRight: 8,
+                scale: 0.45,
+                actions: {
+                    down: {fps: 6},
                     up: {fps: 6},
                     kick: {fps: 15},
                     walk: {fps: 12}
                 },
                 unlockType: 'food',
-                cost: 400,
-                desc: '为了奔跑不息传递爱与勇\n气，而锻炼出了蓬松味美\n的肌肉',
-                powerText: '扩大糖浆的范围',
+                cost: 800,
+                desc: '别看个头小，兄妹齐心可\n是能迸发出惊人的力量呢',
+                powerText: '一次重生机会，且第二次\n生命阶段不出现过窄柱子',
                 power: {
-                    spotWidth: 12
+                    doubleLife: true,
+                    nextLife: 8 // 转世
+                }
+            },
+            {
+                id: 8,
+                name: 'macaron-sister',
+                chName: '马卡龙妹妹',
+                hidden: true,
+                color: '#a0c8aa',
+                width: 104,
+                height: 76,
+                paddingRight: 8,
+                scale: 0.45,
+                actions: {
+                    down: {fps: 6},
+                    up: {fps: 10},
+                    kick: {fps: 15},
+                    walk: {fps: 12}
+                },
+                power: {
+                    stageMinWidth: 32,
+                    previousLife: 7 // 前世
                 }
             }
         ];

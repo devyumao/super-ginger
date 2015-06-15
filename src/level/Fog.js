@@ -19,7 +19,7 @@ define(function (require) {
 
         var image = game.add.image(0, 0, 'pixel-white');
         image.scale.set(game.width / image.width, game.height / image.height);
-        image.alpha = 0.2;
+        image.alpha = 0.15;
         this.image = image;
     };
 

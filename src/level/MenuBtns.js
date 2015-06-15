@@ -41,8 +41,8 @@ define(function (require) {
                 position: 'left',
                 icon: 'icon-heart',
                 onClick: function () {
-                    var ThankPopup = require('./popup/ThankPopup');
-                    new ThankPopup(game);
+                    var ThanksPopup = require('./popup/ThanksPopup');
+                    new ThanksPopup(game);
                 }
             },
             {

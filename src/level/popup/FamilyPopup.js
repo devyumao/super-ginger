@@ -56,7 +56,13 @@ define(function (require) {
     };
 
     FamilyPopup.prototype._setPagerAttrs = function () {
-        this.totalPage = global.herosConfig.length - 2;
+        var heroCount = 0;
+        global.herosConfig.forEach(function (config) {
+            if (!config.hidden) {
+                ++heroCount;
+            }
+        });
+        this.totalPage = heroCount - 2;
         if (this.totalPage < 1) {
             this.totalPage = 1;
         }
@@ -83,6 +89,9 @@ define(function (require) {
         container.y -= (panel.height + panel.marginTop) * (this.page - 1);
 
         global.herosConfig.forEach(function (config, index) {
+            if (config.hidden) {
+                return;
+            }
             var options = me._initPanel(config, index);
             me._initHero(config, index, options);
             me._initInfo(config, index, options);
@@ -271,9 +280,13 @@ define(function (require) {
                                     {
                                         text: '确定用 ' + config.cost +' 果果解锁\n【' + config.chName + '】？',
                                         onConfirm: function () {
-                                            global.setFoodCount(global.getFoodCount() - config.cost);
-                                            global.unlock(index);
-                                            me._select(index);
+                                            global.setFoodCount(
+                                                global.getFoodCount() - config.cost,
+                                                function () {
+                                                    global.unlock(index);
+                                                    me._select(index);
+                                                }
+                                            );
                                         }
                                     }
                                 );
@@ -288,8 +301,7 @@ define(function (require) {
                 },
                 this
             );
-            btnUnlock.alpha = 0.6;
-            util.addHover(btnUnlock);
+            btnUnlock.alpha = 0.7;
 
             if (!this._isInCurrentPage(index)) {
                 // 防止框外触发
@@ -319,6 +331,7 @@ define(function (require) {
                     food.width = 36;
                     food.height = food.width;
                     btnUnlock.addChild(food);
+                    util.addHover(btnUnlock);
                     break;
                 case 'share':
                     var shareText = game.add.text(

@@ -6,15 +6,43 @@
 define(function (require) {
 
     var global = require('common/global');
+    var color = require('common/color');
 
     function preload() {
         var game = this.game;
-        var path = (global.getMode() === 'dev' ? 'src' : 'asset') +'/img/';
+
+        initLoading(game);
+        loadResources(game);
+    }
+
+    // loading global
+    function initLoading(game) {
+        var loadingText = game.add.text(
+            game.width / 2, 260,
+            '姜饼人正在路上...',
+            {
+                font: 'bold 30px ' + global.fontFamily,
+                fill: color.get('white')
+            }
+        );
+        loadingText.anchor.set(0.5);
+
+        var hero = game.add.sprite(game.width / 2, game.height / 2, 'boy-walk');
+        // hero.scale.set();
+        hero.anchor.set(0.5);
+        var action = 'walk';
+        hero.animations.add(action);
+        hero.animations.play(action, 6, true);
+    }
+
+    function loadResources(game) {
+        // var path = (global.getMode() === 'dev' ? 'src' : 'asset') + '/img/';
+        var path = (global.getMode() === 'dev' ? 'src' : 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset') + '/img/';
 
         // TODO: 组织 img 目录
         game.load.image('transparent', path + 'transparent.png');
 
-        ['black', 'white', 'beige', 'orange', 'dark-beige'].forEach(function (color) {
+        ['black', 'white', 'beige', 'dark-beige'].forEach(function (color) {
             game.load.image('pixel-' + color, path + 'pixel/' + color +'.png');
         });
 
@@ -35,7 +63,6 @@ define(function (require) {
 
         game.load.image('popup-edge', path + 'popup-edge.png');
         game.load.image('popup-header', path + 'popup-header.png');
-        game.load.image('popup-container', path + 'popup-container.png');
         game.load.image('panel-edge', path + 'panel-edge.png');
         game.load.image('btn-up', path + 'btn-up.png');
         game.load.image('btn-down', path + 'btn-down.png');
@@ -56,6 +83,9 @@ define(function (require) {
             var actions = hero.actions;
             for (var action in actions) {
                 if (actions.hasOwnProperty(action)) {
+                    if (name === 'boy' && action === 'walk') {
+                        continue;
+                    }
                     game.load.spritesheet(
                         [name, action].join('-'),
                         path + name + '/' + action + '.png',
@@ -64,6 +94,8 @@ define(function (require) {
                 }
             }
         });
+
+        // game.load.spritesheet('baguette-walk', path + 'baguette/' + 'walk.png', 101, 159);
 
         [1582, 1783, 1311].forEach(function (width, index) {
             var no = index + 1;
@@ -85,7 +117,7 @@ define(function (require) {
 
         // TODO: serverData
         var me = this;
-        var keys = ['highest', 'selected', 'unlocks'];
+        var keys = ['highest', 'selected', 'unlocks', 'shared'];
         var storage = global.getStorage(keys);
         var serverKeys = [];
         for (var key in storage) {
@@ -133,7 +165,6 @@ define(function (require) {
         else {
             startLevel();
         }
-
 
         function startLevel() {
             // 与以往不同，menu -> level 是连贯场景，所以实际是同一 state
