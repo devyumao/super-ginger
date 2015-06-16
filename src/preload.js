@@ -28,7 +28,6 @@ define(function (require) {
         loadingText.anchor.set(0.5);
 
         var hero = game.add.sprite(game.width / 2, game.height / 2, 'boy-walk');
-        // hero.scale.set();
         hero.anchor.set(0.5);
         var action = 'walk';
         hero.animations.add(action);
@@ -36,47 +35,57 @@ define(function (require) {
     }
 
     function loadResources(game) {
-        // var path = (global.getMode() === 'dev' ? 'src' : 'asset') + '/img/';
-        var path = (global.getMode() === 'dev' ? 'src' : 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset') + '/img/';
+        var path;
+        var suffix;
+
+        if (global.getMode() === 'dev') {
+            path = 'src/img/';
+            suffix = '.png';
+        }
+        else {
+            path = 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset/img/';
+            suffix = '.png?v=*TIMESTAMP*';
+        }
 
         // TODO: 组织 img 目录
-        game.load.image('transparent', path + 'transparent.png');
+        game.load.image('transparent', path + 'transparent' + suffix);
+        game.load.image('transparent-2', path + 'transparent-2' + suffix);
 
         ['black', 'white', 'beige', 'dark-beige'].forEach(function (color) {
-            game.load.image('pixel-' + color, path + 'pixel/' + color +'.png');
+            game.load.image('pixel-' + color, path + 'pixel/' + color + suffix);
         });
 
-        game.load.image('spot', path + 'spot.png');
+        game.load.image('spot', path + 'spot' + suffix);
 
-        game.load.image('food', path + 'food.png');
-        game.load.image('food-with-halo', path + 'food-with-halo.png');
+        game.load.image('food', path + 'food' + suffix);
+        game.load.image('food-with-halo', path + 'food-with-halo' + suffix);
 
-        game.load.image('title', path + 'title.png');
-        game.load.image('start', path + 'start.png');
+        game.load.image('title', path + 'title' + suffix);
+        game.load.image('start', path + 'start' + suffix);
 
-        game.load.image('menu-btn', path + 'menu-btn.png');
-        game.load.image('icon-heart', path + 'icon-heart.png');
-        game.load.image('icon-hero', path + 'icon-hero.png');
-        game.load.image('icon-podium', path + 'icon-podium.png');
+        game.load.image('menu-btn', path + 'menu-btn' + suffix);
+        game.load.image('icon-heart', path + 'icon-heart' + suffix);
+        game.load.image('icon-hero', path + 'icon-hero' + suffix);
+        game.load.image('icon-podium', path + 'icon-podium' + suffix);
 
-        game.load.image('scoreboard', path + 'scoreboard.png');
+        game.load.image('scoreboard', path + 'scoreboard' + suffix);
 
-        game.load.image('popup-edge', path + 'popup-edge.png');
-        game.load.image('popup-header', path + 'popup-header.png');
-        game.load.image('panel-edge', path + 'panel-edge.png');
-        game.load.image('btn-up', path + 'btn-up.png');
-        game.load.image('btn-down', path + 'btn-down.png');
-        game.load.image('btn-unlock', path + 'btn-unlock.png');
-        game.load.image('btn-confirm', path + 'btn-confirm.png');
-        game.load.image('me-tip', path + 'me-tip.png');
+        game.load.image('popup-edge', path + 'popup-edge' + suffix);
+        game.load.image('popup-header', path + 'popup-header' + suffix);
+        game.load.image('panel-edge', path + 'panel-edge' + suffix);
+        game.load.image('btn-up', path + 'btn-up' + suffix);
+        game.load.image('btn-down', path + 'btn-down' + suffix);
+        game.load.image('btn-unlock', path + 'btn-unlock' + suffix);
+        game.load.image('btn-confirm', path + 'btn-confirm' + suffix);
+        game.load.image('me-tip', path + 'me-tip' + suffix);
 
-        game.load.image('end-board', path + 'end-board.png');
-        game.load.image('end-btn', path + 'end-btn.png');
-        game.load.image('end-btn-share', path + 'end-btn-share.png');
-        game.load.image('new-record', path + 'new-record.png');
+        game.load.image('end-board', path + 'end-board' + suffix);
+        game.load.image('end-btn', path + 'end-btn' + suffix);
+        game.load.image('end-btn-share', path + 'end-btn-share' + suffix);
+        game.load.image('new-record', path + 'new-record' + suffix);
 
-        game.load.spritesheet('stick', path + 'stick.png', 5, 24);
-        game.load.spritesheet('stick-cold', path + 'stick-cold.png', 5, 24);
+        game.load.spritesheet('stick', path + 'stick' + suffix, 5, 24);
+        game.load.spritesheet('stick-cold', path + 'stick-cold' + suffix, 5, 24);
 
         global.herosConfig.forEach(function (hero) {
             var name = hero.name;
@@ -88,28 +97,28 @@ define(function (require) {
                     }
                     game.load.spritesheet(
                         [name, action].join('-'),
-                        path + name + '/' + action + '.png',
+                        path + name + '/' + action + suffix,
                         hero.width, hero.height
                     );
                 }
             }
         });
 
-        // game.load.spritesheet('baguette-walk', path + 'baguette/' + 'walk.png', 101, 159);
+        // game.load.spritesheet('baguette-walk', path + 'baguette/' + 'walk' + suffix, 101, 159);
 
         [1582, 1783, 1311].forEach(function (width, index) {
             var no = index + 1;
             var dir = path + 'view-' + no + '/';
-            game.load.spritesheet('bg-' + no, dir + 'bg.png', width, 800);
-            game.load.spritesheet('mg-far-' + no, dir + 'mg-far.png', width, 800);
-            game.load.spritesheet('mg-near-' + no, dir + 'mg-near.png', width, 800);
+            game.load.spritesheet('bg-' + no, dir + 'bg' + suffix, width, 800);
+            game.load.spritesheet('mg-far-' + no, dir + 'mg-far' + suffix, width, 800);
+            game.load.spritesheet('mg-near-' + no, dir + 'mg-near' + suffix, width, 800);
         });
 
-        game.load.spritesheet('stage-1', path + 'stage-1.png', 300, 266);
-        game.load.spritesheet('stage-2', path + 'stage-2.png', 300, 243);
-        game.load.spritesheet('stage-3', path + 'stage-3.png', 300, 245);
+        game.load.spritesheet('stage-1', path + 'stage-1' + suffix, 300, 266);
+        game.load.spritesheet('stage-2', path + 'stage-2' + suffix, 300, 243);
+        game.load.spritesheet('stage-3', path + 'stage-3' + suffix, 300, 245);
 
-        game.load.image('thanks', path + 'thanks.png');
+        game.load.image('thanks', path + 'thanks' + suffix);
     }
 
     function create() {

@@ -5,8 +5,12 @@
 
 define(function (require) {
 
+    var global = require('common/global');
+
     function init() {
-        require('common/weixin').init();
+        if (global.getMode() === 'prod') {
+            require('common/weixin').init();
+        }
         initGame();
     }
 

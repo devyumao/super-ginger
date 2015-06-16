@@ -235,14 +235,15 @@ define(function (require) {
 
             var btnSelect = game.add.button(
                 0, options.y,
-                'transparent',
+                'pixel-black',
                 function () {
                     this._select(index);
                     this._hide();
                 },
                 this
             );
-            btnSelect.scale.set(panel.width, panel.height);
+            btnSelect.scale.set(panel.width / 2, panel.height / 2);
+            btnSelect.alpha = 0;
             util.addHover(btnSelect, options.panelCtn);
 
             if (!this._isInCurrentPage(index) || !global.getUnlock(index)) {

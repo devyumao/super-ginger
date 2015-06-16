@@ -8,8 +8,20 @@ define(function (require) {
     var global = require('common/global');
 
     function preload() {
-        var path = (global.getMode() === 'dev' ? 'src' : 'asset') +'/img/';
-        this.game.load.spritesheet('boy-walk', path + 'boy/' + 'walk.png', 76, 106);
+        var path;
+        var suffix;
+
+        // TODO: common
+        if (global.getMode() === 'dev') {
+            path = 'src/img/';
+            suffix = '.png';
+        }
+        else {
+            path = 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset/img/';
+            suffix = '.png?v=*TIMESTAMP*';
+        }
+
+        this.game.load.spritesheet('boy-walk', path + 'boy/walk' + suffix, 76, 106);
     }
 
     function create() {
@@ -32,7 +44,13 @@ define(function (require) {
         scale.pageAlignHorizontally = true;
         scale.pageAlignVertically = true;
 
-        this.state.start('preload');
+        // 避免玩家看到屏幕适应的过程
+        setTimeout(
+            function () {
+                game.state.start('preload');
+            },
+            100
+        );
     }
 
     return {

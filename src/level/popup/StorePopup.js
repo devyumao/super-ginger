@@ -56,7 +56,7 @@ define(function (require) {
         storeData.forEach(function (data, index) {
             var btn = game.add.button(
                 0, (panel.marginTop + panel.height) * index + panel.marginTop,
-                'transparent',
+                'transparent-2',
                 function () {
                     window.open(
                         'http://pay.yiluwan.org/pay-center/index.php?'

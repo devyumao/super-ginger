@@ -40,7 +40,7 @@ define(function (require) {
         handleShared();
 
         handleNickname();
-
+        handleSignPackage();
         handleShareText();
     }
 
@@ -101,10 +101,14 @@ define(function (require) {
     function handleFoodCount () {
         var foodCount;
 
-        global.initFoodCount = function () {
-            foodCount = +localStorage.getItem(storageKey.foodCount);
-            foodCount = foodCount ? +foodCount : 0;
-            // foodCount = 2100;
+        global.initFoodCount = function (count) {
+            // foodCount = +localStorage.getItem(storageKey.foodCount);
+            // foodCount = foodCount ? +foodCount : 0;
+            foodCount = 2100;
+        };
+
+        global.assignFoodCount = function (count) {
+            foodCount = count;
         };
 
         global.getFoodCount = function () {
@@ -116,19 +120,30 @@ define(function (require) {
                 return;
             }
 
+            // 加 优先给玩家看，减 要先保证再给玩家看
+            var toBeAdded = count > foodCount;
+
+            function setLocal() {
+                foodCount = count;
+                localStorage.setItem(storageKey.foodCount, count);
+            }
+
             ajax.get({
-                url: count > foodCount ? url.ADD_FOOD : url.USE_FOOD,
+                url: toBeAdded ? url.ADD_FOOD : url.USE_FOOD,
                 data: {
                     count: Math.abs(count - foodCount)
                 },
                 success: function (res) {
                     res = JSON.parse(res);
+                    if (res.success) {
+                        !toBeAdded && setLocal();
+                        cb && cb();
+                    }
                     res.success && cb && cb();
                 }
             });
 
-            foodCount = count;
-            localStorage.setItem(storageKey.foodCount, count);
+            toBeAdded && setLocal();
         };
     }
 
@@ -286,11 +301,23 @@ define(function (require) {
         };
     }
 
+    function handleSignPackage() {
+        var signPackage;
+
+        global.getSignPackage = function () {
+            return signPackage;
+        };
+
+        global.setSignPackage = function (obj) {
+            signPackage = obj;
+        };
+    }
+
     function handleShareText() {
         var shareText;
 
         global.resetShareText = function () {
-            shareText = '快来和姜饼人与他的朋友们一同勇闯甜点世界吧!';
+            shareText = '快来与超能姜饼人一同勇闯甜点世界吧~！';
         };
 
         global.getShareText = function () {

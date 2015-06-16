@@ -24,7 +24,7 @@ define(function (require) {
 
     ThankPopup.prototype._initContent = function () {
         // 后门: 上线前注释掉
-        global.clearStorage();
+        // global.clearStorage();
 
         var game = this.game;
         var container = this.container;

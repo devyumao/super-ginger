@@ -88,9 +88,16 @@ define(function (require) {
         rankData.forEach(function (data, index) {
             var row = game.add.image(
                 0, marginTop + rowHeight * index,
-                index % 2 === 0 ? 'pixel-dark-beige' : 'transparent'
+                index % 2 === 0 ? 'pixel-dark-beige' : 'pixel-black'
             );
-            row.scale.set(rowWidth, rowHeight);
+            if (index % 2 === 0) {
+                row.scale.set(rowWidth, rowHeight);
+            }
+            else {
+                row.scale.set(rowWidth / 2, rowHeight / 2);
+                row.alpha = 0;
+            }
+            
             container.addChild(row);
 
             var rowCtn = game.add.image(row.x, row.y);
