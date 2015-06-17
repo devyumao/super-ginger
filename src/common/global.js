@@ -42,6 +42,7 @@ define(function (require) {
         handleNickname();
         handleSignPackage();
         handleShareText();
+        handleTryTimes();
     }
 
     function handleMode() {
@@ -317,7 +318,7 @@ define(function (require) {
         var shareText;
 
         global.resetShareText = function () {
-            shareText = '快来与超能姜饼人一同勇闯甜点世界吧~！';
+            shareText = '【玩超能姜饼人 赢小米手机】快来一起勇闯甜点世界吧！';
         };
 
         global.getShareText = function () {
@@ -326,6 +327,22 @@ define(function (require) {
 
         global.setShareText = function (text) {
             shareText = text;
+        };
+    }
+
+    function handleTryTimes() {
+        var tryTimes = 0;
+
+        global.resetTryTimes = function () {
+            tryTimes = 0;
+        };
+
+        global.getTryTimes = function () {
+            return tryTimes;
+        };
+
+        global.addTryTimes = function () {
+            ++tryTimes;
         };
     }
 

@@ -105,7 +105,7 @@ define(function (require) {
 
             var rankText = game.add.text(
                 15, rowHeight / 2,
-                (data.rank ? data.rank : index + 1) + '',
+                (data.rank ? (data.rank > 9999 ? '9999+' : data.rank) : index + 1),
                 {
                     font: 'bold 30px ' + global.fontFamily,
                     fill: color.get('coffee'),
@@ -116,7 +116,7 @@ define(function (require) {
             rankText.alpha = 0.7;
             rankText.anchor.set(0, 0.5);
             if (data.rank && data.rank > 99) { // 三位数及以上缩放
-                rankText.scale.set(56/rankText.width);
+                rankText.scale.set(60/rankText.width);
             }
             rowCtn.addChild(rankText);
 

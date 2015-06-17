@@ -19,6 +19,7 @@ define(function (require) {
 
         this._init();
     };
+    // 无需 destroy 方法，因为出口只有跳转状态，会自动销毁
 
     End.prototype._init = function () {
         this._initMask();
@@ -26,6 +27,17 @@ define(function (require) {
         this._initBoard();
         this._initTitle();
         this._initBtns();
+
+        if (global.getSelected() === 0 && !this.hasNewRecord) {
+            global.addTryTimes();
+            if (global.getTryTimes() >= 3) {
+                this._initTip();
+                global.resetTryTimes();
+            }
+        }
+        else {
+            global.resetTryTimes();
+        }
 
         this._show();
 
@@ -218,6 +230,27 @@ define(function (require) {
             text.anchor.set(0.5);
             btn.addChild(text);
         });
+    };
+
+    End.prototype._initTip = function () {
+        var game = this.game;
+
+        var tip = game.add.image(114, 360, 'end-tip');
+        this.body.addChild(tip);
+
+        var text = game.add.text(
+            8, 7,
+            '换个角色\n试试',
+            {
+                font: 'bold 20px ' + global.fontFamily,
+                fill: color.get('white'),
+                align: 'center'
+            }
+        );
+        tip.addChild(text);
+
+        game.add.tween(tip)
+            .to({y: '-5'}, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     };
 
     End.prototype._show = function () {

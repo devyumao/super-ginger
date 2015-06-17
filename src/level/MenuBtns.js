@@ -24,6 +24,7 @@ define(function (require) {
             {
                 position: 'right',
                 icon: 'food',
+                title: '商店',
                 onClick: function () {
                     var StorePopup = require('./popup/StorePopup');
                     new StorePopup(game);
@@ -32,6 +33,7 @@ define(function (require) {
             {
                 position: 'right',
                 icon: 'icon-hero',
+                title: '角色',
                 onClick: function () {
                     var FamilyPopup = require('./popup/FamilyPopup');
                     new FamilyPopup(game);
@@ -40,6 +42,7 @@ define(function (require) {
             {
                 position: 'left',
                 icon: 'icon-heart',
+                title: '致谢',
                 onClick: function () {
                     var ThanksPopup = require('./popup/ThanksPopup');
                     new ThanksPopup(game);
@@ -48,6 +51,7 @@ define(function (require) {
             {
                 position: 'left',
                 icon: 'icon-podium',
+                title: '排名',
                 onClick: function () {
                     var RankPopup = require('./popup/RankPopup');
                     new RankPopup(game);
@@ -57,16 +61,21 @@ define(function (require) {
 
         var btnTexture = 'menu-btn';
         var btnWidth = game.cache.getImage(btnTexture).width;
-        var bottom = 32 + btnWidth / 2;
+        var bottom = 50 + btnWidth / 2;
+        var titleMargin = 8;
 
         var posConfig = {};
         posConfig.left = {
             index: 0,
-            x: 30 + btnWidth / 2
+            x: 30 + btnWidth / 2,
+            titleX: btnWidth / 2 + titleMargin,
+            titleAnchorX: 0
         };
         posConfig.right = {
             index: 0,
-            x: game.width - posConfig.left.x
+            x: game.width - posConfig.left.x,
+            titleX: -btnWidth / 2 - titleMargin,
+            titleAnchorX: 1
         };
 
         var group = this.group;
@@ -89,6 +98,20 @@ define(function (require) {
             icon.width = 34;
             icon.height = icon.width;
             btn.addChild(icon);
+
+            var title = game.add.text(
+                posConfig[pos].titleX, 0,
+                config.title,
+                {
+                    font: 'bold 28px ' + global.fontFamily,
+                    fill: color.get('white')
+
+                }
+            );
+            title.anchor.set(posConfig[pos].titleAnchorX, 0.5);
+            title.alpha = 0.8;
+            title.setShadow(1, 1, '#000', 4);
+            btn.addChild(title);
 
             ++posConfig[pos].index;
         });

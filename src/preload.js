@@ -83,6 +83,7 @@ define(function (require) {
         game.load.image('end-btn', path + 'end-btn' + suffix);
         game.load.image('end-btn-share', path + 'end-btn-share' + suffix);
         game.load.image('new-record', path + 'new-record' + suffix);
+        game.load.image('end-tip', path + 'end-tip' + suffix);
 
         game.load.spritesheet('stick', path + 'stick' + suffix, 5, 24);
         game.load.spritesheet('stick-cold', path + 'stick-cold' + suffix, 5, 24);
