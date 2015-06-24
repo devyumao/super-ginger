@@ -6,7 +6,7 @@
 define(function (require) {
 
     var global = require('common/global');
-    var config = require('./config');
+    var config = require('level/config');
 
     var Stick = function (game) {
         this.game = game;

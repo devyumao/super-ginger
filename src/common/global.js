@@ -389,7 +389,7 @@ define(function (require) {
                 desc: '哥哥出去闯了，有点放心\n不下呢，我也要加油！',
                 powerText: '增加出现果果的几率',
                 power: {
-                    foodProba: 0.58
+                    foodProba: 0.6
                 }
             },
             {
@@ -412,7 +412,7 @@ define(function (require) {
                 desc: '为了传递爱与勇气而奔跑\n不息，锻炼出了蓬松味美\n的肌肉',
                 powerText: '扩大糖浆的范围',
                 power: {
-                    spotWidth: 12
+                    spotWidth: 14
                 }
             },
             {
@@ -435,7 +435,7 @@ define(function (require) {
                 desc: '从香榭丽舍大街某小卖部\n走出的法式长棍，也在力\n争成为世界第一棍',
                 powerText: '不会出现过窄的柱子',
                 power: {
-                    stageMinWidth: 30
+                    stageMinWidth: 36
                 }
             },
             {
@@ -456,9 +456,9 @@ define(function (require) {
                 unlockType: 'food',
                 cost: 250,
                 desc: '来自东方的神秘角色，虽\n然被称为糖，但是其内心\n是甜是咸还难下定论哦',
-                powerText: '命中糖浆，双倍奖励',
+                powerText: '命中糖浆，三倍奖励',
                 power: {
-                    spotMultiple: 2
+                    spotMultiple: 3
                 }
             },
             {
@@ -481,7 +481,7 @@ define(function (require) {
                 desc: '永远一副惊讶表情的甜甜\n圈，说不定会给这个世界\n带来一些惊喜',
                 powerText: '自动翻越小间隙',
                 power: {
-                    stickExtraLength: 12
+                    stickExtraLength: 14
                 }
             },
             {
@@ -504,7 +504,7 @@ define(function (require) {
                 desc: '发型贵气的蛋筒夫人看上\n去有些高冷，其实她的心\n很容易融化哟',
                 powerText: '冷却棒棒的延长速度',
                 power: {
-                    stickSpeed: 6.8,
+                    stickSpeed: 6,
                     stickTexture: 'stick-cold'
                 }
             },
@@ -549,7 +549,7 @@ define(function (require) {
                     walk: {fps: 12}
                 },
                 power: {
-                    stageMinWidth: 32,
+                    stageMinWidth: 36,
                     previousLife: 7 // 前世
                 }
             }

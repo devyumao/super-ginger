@@ -5,7 +5,7 @@
 
 define(function (require) {
 
-    var config = require('./config');
+    var config = require('level/config');
 
     var Background = function (game, options) {
         this.game = game;

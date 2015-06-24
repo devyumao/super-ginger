@@ -5,7 +5,7 @@
 
 define(function (require) {
 
-    var config = require('./config');
+    var config = require('level/config');
 
     var Midground = function (game, options) {
         this.game = game;

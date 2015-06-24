@@ -12,6 +12,23 @@
         margin: 0px;
         background: #000;
     }
+    canvas {
+        padding-bottom: 50px;
+    }
+    .ad {
+        position: fixed;
+        bottom: 0;
+        background: #fff;
+    }
+    .ad img {
+        width: 100%;
+        height: 100%;
+    }
+    .close {
+        position: absolute;
+        background: url(src/img/close.png) no-repeat;
+        background-size: cover;
+    }
     </style>
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script src="dep/esl.js"></script>
@@ -24,6 +41,11 @@
     </script>
 </head>
 <body>
+    <!-- <a id="ad" class="ad" href="http://www.cashlai.com/index.jsp?inviteCode=5577977">
+        <img src="src/img/ad-1.png">
+    </a>
+    <span id="close" class="close"></span> -->
+
     <script>
     require(['main'], function (main) {
         var global = require('common/global');
@@ -31,6 +53,45 @@
         global.setNickname('蝴蝶酥T5w');
         main.init();
     });
+
+    // (function () {
+    //     var gameWidth = 480;
+    //     var gameHeight = 800;
+    //     var winWidth = window.innerWidth;
+    //     var winHeight = window.innerHeight;
+    //     var normalHeight = 50;
+    //     var ratio;
+    //     var D = document;
+    //     var adEl = D.getElementById('ad');
+    //     var adStyle = adEl.style;
+    //     if (winWidth / winHeight > gameWidth / gameHeight) {
+    //         ratio = winHeight / gameHeight;
+    //         adStyle.height = normalHeight * ratio + 'px';
+    //         adStyle.width = gameWidth * ratio + 'px';
+    //         adStyle.left = (winWidth - gameWidth * ratio) / 2 + 'px';
+    //     }
+    //     else {
+    //         ratio = winWidth / gameWidth;
+    //         adStyle.height = normalHeight * ratio + 'px';
+    //         adStyle.width = winWidth + 'px';
+    //     }
+    //     var closeEl = D.getElementById('close');
+    //     var closeStyle = closeEl.style;
+    //     var closeRatio = adEl.clientHeight / normalHeight;
+    //     var closeSize = closeRatio * 34;
+    //     closeStyle.width = closeSize + 'px';
+    //     closeStyle.height = closeSize + 'px';
+    //     closeStyle.bottom = closeRatio * 8 + 'px';
+    //     closeStyle.right = closeRatio * 10 + (adStyle.left ? +adStyle.left.slice(0, -2) : 0) + 'px';
+    //     closeEl.addEventListener(
+    //         'touchstart',
+    //         function () {
+    //             adStyle.display = 'none';
+    //             closeStyle.display = 'none';
+    //         },
+    //         false
+    //     );
+    // })();
     </script>
 </body>
 </html>

@@ -6,11 +6,11 @@
 define(function (require) {
 
     var global = require('common/global');
-    var config = require('./config');
+    var config = require('level/config');
 
-    var Background = require('./Background');
-    var Midground = require('./Midground');
-    var Foreground = require('./Foreground');
+    var Background = require('./ground/Background');
+    var Midground = require('./ground/Midground');
+    var Foreground = require('./ground/Foreground');
     var Fog = require('./Fog');
 
     var Start = require('./Start');

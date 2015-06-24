@@ -7,7 +7,7 @@ define(function (require) {
 
     var global = require('common/global');
     var util = require('common/util');
-    var config = require('./config');
+    var config = require('level/config');
     var Food = require('./Food');
 
     var Stage = function (game, options) {
