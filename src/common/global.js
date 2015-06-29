@@ -5,8 +5,6 @@
 
 define(function (require) {
 
-    // TODO: big init
-
     var ajax = require('common/ajax');
     var url = require('common/url');
     var util = require('common/util');
