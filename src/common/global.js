@@ -412,7 +412,7 @@ define(function (require) {
                 desc: '为了传递爱与勇气而奔跑\n不息，锻炼出了蓬松味美\n的肌肉',
                 powerText: '扩大糖浆的范围',
                 power: {
-                    spotWidth: 14
+                    spotWidth: 16
                 }
             },
             {
@@ -456,9 +456,9 @@ define(function (require) {
                 unlockType: 'food',
                 cost: 250,
                 desc: '来自东方的神秘角色，虽\n然被称为糖，但是其内心\n是甜是咸还难下定论哦',
-                powerText: '命中糖浆，三倍奖励',
+                powerText: '命中糖浆，双倍奖励',
                 power: {
-                    spotMultiple: 3
+                    spotMultiple: 2
                 }
             },
             {

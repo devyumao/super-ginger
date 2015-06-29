@@ -24,6 +24,7 @@ define(function (require) {
     var Scoreboard = require('./Scoreboard');
     var Foodboard = require('./Foodboard');
     var Tip = require('./Tip');
+    var Combo = require('./Combo');
 
     var Level = function () {
     };
@@ -147,6 +148,8 @@ define(function (require) {
             this.playTip = new Tip(game, {text: '按住屏幕\n使棒棒变长'});
         }
 
+        this.combo = new Combo(game);
+
         this._bindTouch();
     };
 
@@ -204,7 +207,7 @@ define(function (require) {
         // 加分文本
         var pointsText = game.add.text(
             this.stage.getSpotX(), game.height - config.horizon,
-            '+' + this.stage.getSpotMultiple(),
+            '+' + this.stage.getSpotMultiple() * this.combo.get(),
             {
                 font: 'bold 20px ' + global.fontFamily,
                 fill: color.get('dark-grey')
@@ -280,6 +283,7 @@ define(function (require) {
         var foreground = this.foreground;
         var scoreboard = this.scoreboard;
         var foodboard = this.foodboard;
+        var combo = this.combo;
 
         var currEdgeX = stage.getCurrEdgeX();
         var nextEdgeX = stage.getNextEdgeX();
@@ -293,8 +297,12 @@ define(function (require) {
 
             if (stick.getFullLength() > stage.getInterval()) { // 长度足够
                 if (stick.isInSpot(stage)) { // 命中红区
-                    scoreboard.addScore(stage.getSpotMultiple());
+                    scoreboard.addScore(stage.getSpotMultiple() * combo.get());
+                    combo.add();
                     me._showReward();
+                }
+                else {
+                    combo.reset();
                 }
 
                 // 先走到 next 前沿

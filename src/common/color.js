@@ -16,7 +16,8 @@ define(function (require) {
         'dark-beige': '#e1d0a1',
         'coffee': '#554d36',
         'yellow': '#ffcd43',
-        'cherry': '#ef6c65'
+        'cherry': '#ef6c65',
+        'orange': '#ffad5d'
     };
 
     function get(color) {

@@ -235,7 +235,7 @@ define(function (require) {
 
     Stage.prototype.updateSpotWidth = function () {
         var spotWidth = global.getHeroConfig().power.spotWidth;
-        this.spotWidth = spotWidth ? spotWidth : 10;
+        this.spotWidth = spotWidth ? spotWidth : 14;
     };
 
     return Stage;
