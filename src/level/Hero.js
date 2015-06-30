@@ -42,7 +42,7 @@ define(function (require) {
         /**
          * 是否倒置
          *
-         * @type {?Phaser.boolean}
+         * @type {?boolean}
          */
         this.upsideDown = false;
 
