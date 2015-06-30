@@ -8,10 +8,10 @@ define(function (require) {
     return {
         themes: {
             1: {
-                offset: -80,
+                offset: -80
             },
             2: {
-                offset: 200,
+                offset: 200
             },
             3: {
                 offset: 100
@@ -20,6 +20,7 @@ define(function (require) {
 
         initialHorizon: 150,
         horizon: 235,
+        currEdgeX: 110,
 
         foodWidth: 25
     };

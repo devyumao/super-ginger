@@ -32,7 +32,7 @@ define(function (require) {
             this.trash = this.image;
         }
 
-        var image = game.add.tileSprite(110, game.height - config.horizon, 5, 0.001, this.texture);
+        var image = game.add.tileSprite(config.currEdgeX, game.height - config.horizon, 5, 0.001, this.texture);
         image.anchor.set(0.5, 1);
         this.image = image;
     };

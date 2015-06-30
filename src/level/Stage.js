@@ -26,11 +26,11 @@ define(function (require) {
         this.food = null;
 
         this.height = game.cache.getImage(this.imageName).height;
-        this.currEdgeX = 110;
+        this.currEdgeX = config.currEdgeX;
 
         this.updateMinWidth();
 
-        this.maxWidth = 110;
+        this.maxWidth = config.currEdgeX;
 
         this.updateFoodProba();
 
