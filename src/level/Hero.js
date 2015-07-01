@@ -318,13 +318,13 @@ define(function (require) {
             stick.updateExtraLength();
         }
         var stage = level.stage;
-        // 食物几率
+        // 食物出现几率
         stage.updateFoodProba();
         // 最小柱宽
         stage.updateMinWidth();
-        // 糖浆乘数
+        // 奖励点乘数
         stage.updateSpotMultiple();
-        // 糖浆宽度
+        // 奖励点宽度
         stage.updateSpotWidth();
 
         if (temporary) {

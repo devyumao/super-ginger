@@ -22,7 +22,12 @@ define(function (require) {
         horizon: 235,
         currEdgeX: 110,
 
-        foodWidth: 25
+        foodWidth: 25,
+
+        tips: {
+            play: '按住屏幕\n使棒棒变长',
+            food: '行走时点击屏幕\n可翻转角色吃果果'
+        }
     };
 
 });

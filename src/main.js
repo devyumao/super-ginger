@@ -19,7 +19,7 @@ define(function (require) {
 
         game.state.add('boot', require('boot'));
         game.state.add('preload', require('preload'));
-        game.state.add('level', require('level/Level'));
+        game.state.add('level', require('level/level'));
 
         game.state.start('boot');
     }

@@ -26,14 +26,14 @@ define(function (require) {
         /**
          * 贴图
          *
-         * @type {?Phaser.Image}
+         * @type {?Phaser.tileSprite}
          */
         this.image = null;
 
         /**
          * 废弃的贴图
          *
-         * @type {?Phaser.Image}
+         * @type {?Phaser.tileSprite}
          */
         this.trash = null;
 
@@ -108,13 +108,14 @@ define(function (require) {
      * @param {number} tweenOptions.duration 持续时间
      * @param {number} tweenOptions.delay 延时
      * @param {Function=} cb 回调
+     * @param {*=} cbContext 回调上下文
      */
-    Stick.prototype._rotate = function (angle, tweenOptions, cb) {
+    Stick.prototype._rotate = function (angle, tweenOptions, cb, cbContext) {
         var game = this.game;
 
         var rotate = game.add.tween(this.image)
             .to({angle: angle}, tweenOptions.duration, Phaser.Easing.Quadratic.In, false, tweenOptions.delay);
-        cb && rotate.onComplete.add(cb);
+        cb && rotate.onComplete.add(cb, cbContext);
         rotate.start();
     };
 
@@ -123,19 +124,21 @@ define(function (require) {
      *
      * @public
      * @param {Function=} cb 回调
+     * @param {*=} cbContext 回调上下文
      */
-    Stick.prototype.layDown = function (cb) {
-        this._rotate(90, {duration: 400, delay: 150}, cb);
+    Stick.prototype.layDown = function (cb, cbContext) {
+        this._rotate(90, {duration: 400, delay: 150}, cb, cbContext);
     };
 
     /**
-     * 放平
+     * 落下
      *
      * @public
      * @param {Function=} cb 回调
+     * @param {*=} cbContext 回调上下文
      */
-    Stick.prototype.fall = function (cb) {
-        this._rotate(180, {duration: 250, delay: 100}, cb);
+    Stick.prototype.fall = function (cb, cbContext) {
+        this._rotate(180, {duration: 250, delay: 100}, cb, cbContext);
     };
 
     /**
