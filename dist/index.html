@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>超能姜饼人</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+    body {
+        padding: 0px;
+        margin: 0px;
+        background: #000;
+    }
+    canvas {
+        padding-bottom: 50px;
+    }
+    .ad {
+        position: fixed;
+        bottom: 0;
+        background: #fff;
+    }
+    .ad img {
+        width: 100%;
+        height: 100%;
+    }
+    .close {
+        position: absolute;
+        background: url(src/img/close.png) no-repeat;
+        background-size: cover;
+    }
+    </style>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="http://ishowshao-game.qiniudn.com/super-gingerbread/dep/esl.js"></script>
+    <script src="http://ishowshao-game.qiniudn.com/super-gingerbread/dep/phaser-no-physics.min.js"></script>
+    <script src="http://ishowshao-game.qiniudn.com/super-gingerbread/dep/phaser-screen-shake.min.js"></script>
+    <script>
+    require.config({
+        baseUrl: 'asset'
+    });
+    </script>
+</head>
+<body>
+    <script>
+    require(['main'], function (main) {
+        var global = require('common/global');
+        global.setMode('dev');
+        global.setNickname('蝴蝶酥T5w');
+        main.init();
+    });
+    </script>
+</body>
+</html>
