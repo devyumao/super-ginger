@@ -1,6 +1,6 @@
 # 超能姜饼人
 
-[Demo](http://devyumao.github.io/super-ginger/dist/)
+Demo: http://devyumao.github.io/super-ginger/dist/
 
 ![QR code](https://raw.githubusercontent.com/devyumao/super-ginger/master/src/img/qr.png)
 
