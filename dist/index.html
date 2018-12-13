@@ -30,17 +30,22 @@
         background-size: cover;
     }
     </style>
-    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-    <script src="http://ishowshao-game.qiniudn.com/super-gingerbread/dep/esl.js"></script>
-    <script src="http://ishowshao-game.qiniudn.com/super-gingerbread/dep/phaser-no-physics.min.js"></script>
-    <script src="http://ishowshao-game.qiniudn.com/super-gingerbread/dep/phaser-screen-shake.min.js"></script>
+    <script src="dep/jweixin.js"></script>
+    <script src="dep/esl.js"></script>
+    <script src="dep/phaser-no-physics.min.js"></script>
+    <script src="dep/phaser-screen-shake.min.js"></script>
     <script src="./asset/game.js"></script>
+    <script>
+        require.config({
+            baseUrl: 'asset'
+        });
+    </script>
 </head>
 <body>
     <script>
     require(['main'], function (main) {
         var global = require('common/global');
-        global.setMode('dev');
+        global.setMode('prod');
         global.setNickname('蝴蝶酥T5w');
         main.init();
     });

@@ -9,6 +9,7 @@
         "gulp-amd-optimizer": "",
         "gulp-concat": "",
         "gulp-uglify": "",
+        "gulp-replace": "",
         "event-stream": "",
         "del": ""
     }

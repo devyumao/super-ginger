@@ -17,7 +17,8 @@ define(function (require) {
             suffix = '.png';
         }
         else {
-            path = 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset/img/';
+            // path = 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset/img/';
+            path = 'asset/img/';
             suffix = '.png?v=*TIMESTAMP*';
         }
 

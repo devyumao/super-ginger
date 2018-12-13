@@ -4,7 +4,6 @@
  */
 
 define(function () {
-
     var workSpace = 'http://farm.yiluwan.org/super-gingerbread/';
 
     return {

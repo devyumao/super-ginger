@@ -43,7 +43,8 @@ define(function (require) {
             suffix = '.png';
         }
         else {
-            path = 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset/img/';
+            // path = 'http://ishowshao-game.qiniudn.com/super-gingerbread/asset/img/';
+            path = 'asset/img/';
             suffix = '.png?v=*TIMESTAMP*';
         }
 
@@ -123,7 +124,8 @@ define(function (require) {
     }
 
     function create() {
-        global.getMode() === 'dev' && global.initFoodCount();
+        // global.getMode() === 'dev' && global.initFoodCount();
+        global.initFoodCount();
 
         // TODO: serverData
         var me = this;
@@ -141,40 +143,40 @@ define(function (require) {
                 localKeys.push(key);
             }
         });
-
-        // for test
-        // localkeys = [];
-        // serverKeys = keys;
         
         localKeys.length && global.assignStorage(localKeys);
 
         if (serverKeys.length) {
-            var serverData = require('common/serverData');
-            serverData.load(
-                serverKeys,
-                function (res) {
-                    res = JSON.parse(res);
-                    var missingKeys = [];
-                    serverKeys.forEach(function (key) {
-                        if (!res.hasOwnProperty(key)) {
-                            missingKeys.push(key);
-                        }
-                    });
-                    global.initStorage(missingKeys);
-                    global.setStorage(res);
-                    startLevel();
-                },
-                function (err) {
-                    if (global.getMode() === 'dev' || global.getNickname === 'devyumao') {
-                        global.initStorage(serverKeys);
-                    }
-                    startLevel();
-                }
-            );
+            global.initStorage(serverKeys);
+
+            // var serverData = require('common/serverData');
+            // serverData.load(
+            //     serverKeys,
+            //     function (res) {
+            //         res = JSON.parse(res);
+            //         var missingKeys = [];
+            //         serverKeys.forEach(function (key) {
+            //             if (!res.hasOwnProperty(key)) {
+            //                 missingKeys.push(key);
+            //             }
+            //         });
+            //         global.initStorage(missingKeys);
+            //         global.setStorage(res);
+            //         startLevel();
+            //     },
+            //     function (err) {
+            //         if (global.getMode() === 'dev' || global.getNickname === 'devyumao') {
+            //             global.initStorage(serverKeys);
+            //         }
+            //         startLevel();
+            //     }
+            // );
         }
-        else {
-            startLevel();
-        }
+        // else {
+        //     startLevel();
+        // }
+        
+        startLevel();
 
         function startLevel() {
             // 与以往不同，menu -> level 是连贯场景，所以实际是同一 state

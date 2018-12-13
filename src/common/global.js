@@ -101,9 +101,9 @@ define(function (require) {
         var foodCount;
 
         global.initFoodCount = function (count) {
-            // foodCount = +localStorage.getItem(storageKey.foodCount);
-            // foodCount = foodCount ? +foodCount : 0;
-            foodCount = 2100;
+            foodCount = +localStorage.getItem(storageKey.foodCount);
+            foodCount = foodCount ? +foodCount : 2100;
+            // foodCount = 2100;
         };
 
         global.assignFoodCount = function (count) {
@@ -119,30 +119,34 @@ define(function (require) {
                 return;
             }
 
-            // 加 优先给玩家看，减 要先保证再给玩家看
-            var toBeAdded = count > foodCount;
+            localStorage.setItem(storageKey.foodCount, count);
 
-            function setLocal() {
-                foodCount = count;
-                localStorage.setItem(storageKey.foodCount, count);
-            }
+            cb && cb();
 
-            ajax.get({
-                url: toBeAdded ? url.ADD_FOOD : url.USE_FOOD,
-                data: {
-                    count: Math.abs(count - foodCount)
-                },
-                success: function (res) {
-                    res = JSON.parse(res);
-                    if (res.success) {
-                        !toBeAdded && setLocal();
-                        cb && cb();
-                    }
-                    res.success && cb && cb();
-                }
-            });
+            // // 加 优先给玩家看，减 要先保证再给玩家看
+            // var toBeAdded = count > foodCount;
 
-            toBeAdded && setLocal();
+            // function setLocal() {
+            //     foodCount = count;
+            //     localStorage.setItem(storageKey.foodCount, count);
+            // }
+
+            // ajax.get({
+            //     url: toBeAdded ? url.ADD_FOOD : url.USE_FOOD,
+            //     data: {
+            //         count: Math.abs(count - foodCount)
+            //     },
+            //     success: function (res) {
+            //         res = JSON.parse(res);
+            //         if (res.success) {
+            //             !toBeAdded && setLocal();
+            //             cb && cb();
+            //         }
+            //         res.success && cb && cb();
+            //     }
+            // });
+
+            // toBeAdded && setLocal();
         };
     }
 
